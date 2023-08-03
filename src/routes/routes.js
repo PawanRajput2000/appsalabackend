@@ -7,7 +7,7 @@ const { savecategory, fetchcategory } = require("../controller/category")
 const { getProduct, saveProduct, productDetails } = require("../controller/appschemaData")
 
 router.post('/signup',signIN)
-router.get("/login",logIN)
+router.post("/login",logIN)
 
 
 router.post("/review",review)
