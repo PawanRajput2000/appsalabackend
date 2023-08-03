@@ -41,6 +41,7 @@ const getProduct = async (req, res) => {
 
         return res.status(200).json({ status: true, data: data });
     } catch (err) {
+        console.log(err.message)
         return res.status(500).json({ status: false, data: err.message });
     }
 };

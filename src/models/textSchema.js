@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 
-const textSchema = new mongoose.Schema({
+const reviewSchema = new mongoose.Schema({
     content: {
         type: String,
         required: true,
@@ -11,7 +11,7 @@ const textSchema = new mongoose.Schema({
 });
 
 
-const Text = mongoose.model('Text', textSchema);
+const review = mongoose.model('review', reviewSchema);
 
 
-module.exports = Text;
+module.exports = review;

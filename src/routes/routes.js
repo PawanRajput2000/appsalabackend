@@ -2,16 +2,16 @@ const express = require("express")
 const router = express.Router()
 
 const {logIN,signIN} = require("../controller/userRegistration")
-const { savetext,gettext } = require("../controller/text")
+const { review } = require("../controller/review")
 const { savecategory, fetchcategory } = require("../controller/category")
 const { getProduct, saveProduct, productDetails } = require("../controller/appschemaData")
 
 router.post('/signup',signIN)
-router.post("/login",logIN)
+router.get("/login",logIN)
 
 
-router.post("/text",savetext)
-router.post("/gettext",gettext)
+router.post("/review",review)
+
 
 
 router.post("/category",savecategory)

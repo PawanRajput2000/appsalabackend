@@ -2,7 +2,7 @@ const text = require("../models/textSchema")
 
 
 
-const savetext = async (req, res) => {
+const review = async (req, res) => {
 
 
     try {
@@ -20,20 +20,8 @@ const savetext = async (req, res) => {
 }
 
 
-const gettext = async (req, res) => {
-    try {
-        const _id = req.body.id
-        const data = await text.findById(_id)
-        return res.json({ status: true, data: data })
-
-    } catch (err) {
-        return res.json({ status: false, data: err.message })
-
-    }
-}
 
 
 
 
-
-module.exports = { savetext, gettext }
+module.exports = { review }
