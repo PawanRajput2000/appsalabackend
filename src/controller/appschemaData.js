@@ -50,8 +50,8 @@ const getProduct = async (req, res) => {
 
 const productDetails = async (req, res) => {
     try {
-        let name = req.params.name
-        let data = await appSchema.findOne({ name: name })
+        let slug = req.params.slug
+        let data = await appSchema.findOne({ slug: slug })
         if(!data){
             return res.status(500).send({ status: false, data: "No Data Found"})
         }
@@ -60,5 +60,8 @@ const productDetails = async (req, res) => {
         return res.status(500).send({ status: false, data: err.message })
     }
 }
+
+
+
 
 module.exports = { getProduct, saveProduct, productDetails}

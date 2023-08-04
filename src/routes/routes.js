@@ -20,7 +20,7 @@ router.get("/category",fetchcategory)
 router.post("/create_products",saveProduct)
 router.get("/products",getProduct)
 
-router.get("/product-list/:name", productDetails)
+router.get("/product-list/:slug", productDetails)
 
 
 
