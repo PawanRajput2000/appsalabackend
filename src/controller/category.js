@@ -14,24 +14,34 @@ const savecategory = async(req,res)=>{
 }
 
 
-const fetchcategory = async (req, res) => {
-    try {
-      let data = await CategorySchema.find();
-  
-      // Create a new ID for each data entry
-      data = data.map((item) => ({
-        ...item.toObject(),
-        _id: item._id.toString(), // Convert ObjectId to string for better representation
-      }));
-  
-      // Filter data where parent_id is not equal to null
-      const filteredData = data.filter((item) => item.parent_id !== null);
-  
-      return res.json({ status: true, data: filteredData });
-    } catch (err) {
-      return res.json({ status: false, data: err.message });
-    }
-  };
-  
+const fetchSubcategory = async (req, res) => {
+  try {
+    let data = await CategorySchema.find();
 
-module.exports = {savecategory,fetchcategory}
+    // Create a new ID for each data entry
+    data = data.map((item) => ({
+      ...item.toObject(),
+      _id: item._id.toString(), // Convert ObjectId to string for better representation
+    }));
+
+    // Filter data where parent_id is not equal to null
+    const filteredData = data.filter((item) => item.parent_id !== null);
+
+    return res.json({ status: true, data: filteredData });
+  } catch (err) {
+    return res.json({ status: false, data: err.message });
+  }
+};
+
+
+const fetchCategory = async(req,res)=>{
+    try{
+       let data = await CategorySchema.find().populate("categories")
+       console.log(data)
+    }catch(err){
+   console.log(err.message)
+    }
+}
+
+
+module.exports = {savecategory, fetchSubcategory,fetchCategory}
