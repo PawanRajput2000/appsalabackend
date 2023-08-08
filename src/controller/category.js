@@ -59,7 +59,7 @@ const fetchCategory = async (req, res) => {
 
         // Filter categories with non-empty subCategory_ids
         const finalData = data.filter(filterNonEmptySubcategories);
-       
+
 
         // Respond with the filtered data
         return res.json({ status: true, data: finalData });

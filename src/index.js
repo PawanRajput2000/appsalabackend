@@ -11,9 +11,9 @@ app.use(multer().any());
 app.use(express.urlencoded({ extended: true }));
 
 mongoose.connect(
-    "mongodb+srv://indiaProject:LEsbp5k9osyQcp6Q@indiaproject.1go0lry.mongodb.net/",
-    { useNewUrlParser: true }
-  )
+  "mongodb+srv://indiaProject:LEsbp5k9osyQcp6Q@indiaproject.1go0lry.mongodb.net/",
+  { useNewUrlParser: true }
+)
   .then(() => console.log("MongoDB is connected"))
   .catch((err) => console.log(err.message));
 

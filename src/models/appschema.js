@@ -5,7 +5,7 @@ const appSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        unique :true
+        unique: true
     },
     slug: {
         type: String,
@@ -15,7 +15,7 @@ const appSchema = new mongoose.Schema({
     shortname: {
         type: String,
         required: true,
-        unique :true
+        unique: true
     },
     rating: {
         Usability: Number,
@@ -27,16 +27,16 @@ const appSchema = new mongoose.Schema({
     },
     logo: {
         type: String,
-       
+
     },
     tag: {
         type: [String],
         required: true
     },
     Category: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Category',
-        
+        type: String,
+        required: true
+
     },
     shortDescription: {
         type: String,

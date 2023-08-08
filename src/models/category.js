@@ -30,8 +30,8 @@ const categorySchema = new mongoose.Schema({
       required: true,
     },
   },
-},{
-  timestamps:true 
+}, {
+  timestamps: true
 });
 
 // Define the Category model

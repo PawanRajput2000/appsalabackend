@@ -76,7 +76,7 @@ const getProduct = async (req, res) => {
             return res.status(500).send({ status: false, data: "No Data Found" })
         }
 
-      // Rating calculation
+        // Rating calculation
         data = data.map((app) => {
             const ratings = Object.values(app.rating);
             const validRatings = ratings.filter((rating) => !isNaN(rating));
@@ -113,5 +113,20 @@ const productDetails = async (req, res) => {
 
 
 
+const productListByCategory = async (req, res) => {
 
-module.exports = { getProduct, saveProduct, productDetails }
+    try {
+        let category = req.params.categoryname
+        let data = await appSchema.find({ "Category": { $in: category } })
+        return res.status(200).send({ status: true, data: data })
+
+    } catch (err) {
+        return res.status(500).send({ status: false, data: err.message })
+    }
+
+}
+
+
+
+
+module.exports = { getProduct, saveProduct, productDetails, productListByCategory }

@@ -26,16 +26,16 @@ const user = new mongoose.Schema({
                 enum: ["Yes", "No", "Maybe"],
                 default: 'No'
 
-            },subscription:{
-                date :{
-                    type : Date,
-                    default : Date.now()
-                },amount :{
-                    type : Number ,
-                    required : true 
-                },duration:{
-                    type : Number,
-                    required : true 
+            }, subscription: {
+                date: {
+                    type: Date,
+                    default: Date.now()
+                }, amount: {
+                    type: Number,
+                    required: true
+                }, duration: {
+                    type: Number,
+                    required: true
                 }
 
             }
