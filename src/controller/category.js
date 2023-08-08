@@ -30,10 +30,10 @@ const fetchSubcategory = async (req, res) => {
         };
 
         // Filter categories with non-empty subCategory_ids
-        const categoriesWithSubcategories = data.filter(filterNonEmptySubcategories);
+        const categoriesData = data.filter(filterNonEmptySubcategories);
 
         // Respond with the filtered data
-        return res.json({ status: true, data: categoriesWithSubcategories });
+        return res.json({ status: true, data: categoriesData });
     } catch (err) {
         console.log(err.message);
         return res.status(500).json({ status: false, message: "Internal Server Error" });
@@ -44,23 +44,30 @@ const fetchSubcategory = async (req, res) => {
 
 const fetchCategory = async (req, res) => {
     try {
-        
-        let data = await CategorySchema.find()
+        let data = await CategorySchema.find().populate("subCategory_ids");
 
-        //fetch all category data 
+        // Fetch all category data
         data = data.map((item) => ({
             ...item.toObject(),
             _id: item._id.toString(), // Convert ObjectId to string for better representation
         }));
 
-        // Filter data where parent_id is  equal to null
-        const categoryData = data.filter((item) => item.parent_id == null);
+        // Function to filter categories with non-empty subCategory_ids
+        const filterNonEmptySubcategories = (category) => {
+            return category.subCategory_ids && category.subCategory_ids.length > 0;
+        };
 
+        // Filter categories with non-empty subCategory_ids
+        const finalData = data.filter(filterNonEmptySubcategories);
+       
 
+        // Respond with the filtered data
+        return res.json({ status: true, data: finalData });
     } catch (err) {
-        console.log(err.message)
+        console.log(err.message);
+        return res.status(500).json({ status: false, message: "Internal Server Error" });
     }
-}
+};
 
 
 module.exports = { savecategory, fetchSubcategory, fetchCategory }

@@ -76,7 +76,7 @@ const getProduct = async (req, res) => {
             return res.status(500).send({ status: false, data: "No Data Found" })
         }
 
-
+      // Rating calculation
         data = data.map((app) => {
             const ratings = Object.values(app.rating);
             const validRatings = ratings.filter((rating) => !isNaN(rating));

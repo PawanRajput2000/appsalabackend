@@ -11,11 +11,11 @@ const categorySchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  subCategory_ids: {
-    type: [mongoose.Schema.Types.ObjectId], // Keep the array brackets here for multiple IDs
+  subCategory_ids: [{
+    type: mongoose.Schema.Types.ObjectId, // Keep the array brackets here for multiple IDs
     ref: "Category",
     default: null,
-  },
+  }],
   description: {
     type: String,
     required: true,
