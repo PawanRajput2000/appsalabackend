@@ -1,47 +1,66 @@
 const CategorySchema = require("../models/category")
 
 
-const savecategory = async(req,res)=>{
+const savecategory = async (req, res) => {
     try {
-        const body  = req.body
+        const body = req.body
 
         let data = await CategorySchema.insertMany(body)
-        return res.json({status : true , data : data})
-    }catch(err){
+        return res.json({ status: true, data: data })
+    } catch (err) {
         console.log(err.message)
-      return res.json({status : false , data : err.message})
+        return res.json({ status: false, data: err.message })
     }
 }
 
 
 const fetchSubcategory = async (req, res) => {
-  try {
-    let data = await CategorySchema.find();
+    try {
+        let data = await CategorySchema.find();
 
-    // Create a new ID for each data entry
-    data = data.map((item) => ({
-      ...item.toObject(),
-      _id: item._id.toString(), // Convert ObjectId to string for better representation
-    }));
+        // Fetch all category data
+        data = data.map((item) => ({
+            ...item.toObject(),
+            _id: item._id.toString(), // Convert ObjectId to string for better representation
+        }));
 
-    // Filter data where parent_id is not equal to null
-    const filteredData = data.filter((item) => item.parent_id !== null);
+        // Function to filter categories with non-empty subCategory_ids
+        const filterNonEmptySubcategories = (category) => {
+            return category.subCategory_ids && category.subCategory_ids.length == 0;
+        };
 
-    return res.json({ status: true, data: filteredData });
-  } catch (err) {
-    return res.json({ status: false, data: err.message });
-  }
+        // Filter categories with non-empty subCategory_ids
+        const categoriesWithSubcategories = data.filter(filterNonEmptySubcategories);
+
+        // Respond with the filtered data
+        return res.json({ status: true, data: categoriesWithSubcategories });
+    } catch (err) {
+        console.log(err.message);
+        return res.status(500).json({ status: false, message: "Internal Server Error" });
+    }
 };
 
 
-const fetchCategory = async(req,res)=>{
-    try{
-       let data = await CategorySchema.find().populate("categories")
-       console.log(data)
-    }catch(err){
-   console.log(err.message)
+
+const fetchCategory = async (req, res) => {
+    try {
+        
+        let data = await CategorySchema.find()
+
+        //fetch all category data 
+        data = data.map((item) => ({
+            ...item.toObject(),
+            _id: item._id.toString(), // Convert ObjectId to string for better representation
+        }));
+
+        // Filter data where parent_id is  equal to null
+        const categoryData = data.filter((item) => item.parent_id == null);
+
+
+    } catch (err) {
+        console.log(err.message)
     }
 }
 
 
-module.exports = {savecategory, fetchSubcategory,fetchCategory}
+module.exports = { savecategory, fetchSubcategory, fetchCategory }

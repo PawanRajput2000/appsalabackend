@@ -11,8 +11,8 @@ const categorySchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  parent_id: {
-    type: mongoose.Schema.Types.ObjectId,
+  subCategory_ids: {
+    type: [mongoose.Schema.Types.ObjectId], // Keep the array brackets here for multiple IDs
     ref: "Category",
     default: null,
   },
@@ -30,6 +30,8 @@ const categorySchema = new mongoose.Schema({
       required: true,
     },
   },
+},{
+  timestamps:true 
 });
 
 // Define the Category model
