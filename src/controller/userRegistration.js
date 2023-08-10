@@ -1,4 +1,5 @@
 const registerUser = require("../models/userModel")
+const jwt = require("jsonwebtoken")
 
 
 const signIN = async (req, res) => {
@@ -36,13 +37,20 @@ const logIN = async (req, res) => {
         if (!password) {
             return res.status(400).send({ status: false, data: "Password is require" })
         }
-
+       
         const check = await registerUser.findOne(req.body)
 
         if (!check) {
             return res.status(400).send({ status: false, data: "user Not Found" })
         }
 
+        let userId = check._id
+        let token = jwt.sign({
+            userId:userId
+        },"osnil web solution")
+        
+        //set token inside header 
+        res.setHeader("x-api-token",token)
         return res.status(200).send({ status: true, data: "login successfully" })
 
     } catch (err) {

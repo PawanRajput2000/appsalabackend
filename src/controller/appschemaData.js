@@ -5,9 +5,9 @@ const saveProduct = async (req, res) => {
     try {
         let formData = req.body
         console.log(formData)
-        let files = req.files;
+        let files = req.files;    
 
-        console.log(files);
+        console.log(files);  
 
 
         console.log(formData.logo)
@@ -16,7 +16,7 @@ const saveProduct = async (req, res) => {
         let checkUnique = await appSchema.findOne({ name: formData.slug })
 
         if (checkUnique) {
-            return res.status(400).json({ status: true, data: "slug should be unique" })
+            return res.status(400).json({ status: false, data: "slug should be unique" })
         }
 
         if (files.length === 0 || files[0].fieldname !== "logo") {
@@ -61,11 +61,12 @@ const saveProduct = async (req, res) => {
 
 
         let saveData = await appSchema.create(formData)
+        console.log("helloo",saveData)
         return res.status(201).json({ status: true, data: saveData })
-
+        
     } catch (err) {
         console.log("500", err.message)
-        return res.status(500).json({ status: true, data: err.message })
+        return res.status(500).json({ status: false, data: err.message })
     }
 }
 
@@ -117,7 +118,13 @@ const productListByCategory = async (req, res) => {
 
     try {
         let category = req.params.categoryname
+
         let data = await appSchema.find({ "Category": { $in: category } })
+
+        if (data.length === 0) {
+            return res.status(404).send({ status: false, data: "not found" })
+        }
+
         return res.status(200).send({ status: true, data: data })
 
     } catch (err) {

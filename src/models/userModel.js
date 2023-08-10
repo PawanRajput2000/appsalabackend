@@ -15,6 +15,11 @@ const user = new mongoose.Schema({
         type: String,
         required: true
     },
+    role:{
+        type :String,
+        enum:["admin","user"],
+        required :true
+    },
     following_app: [
         {
             obj_id: {
@@ -23,7 +28,7 @@ const user = new mongoose.Schema({
             },
             status: {
                 type: String,
-                enum: ["Yes", "No", "Maybe"],
+                enum: ["Using","Yes", "No", "Maybe",],
                 default: 'No'
 
             }, subscription: {
@@ -36,6 +41,20 @@ const user = new mongoose.Schema({
                 }, duration: {
                     type: Number,
                     required: true
+                },package :{
+                    type :String,
+                    
+                },rating: {
+                    Usability: Number,
+                    Perfomance: Number,
+                    Features: Number,
+                    Support: Number,
+                    Value: Number,
+                    Company: Number,
+                },comment:{
+                     type :mongoose.Schema.Types.ObjectId,
+                     ref : "Comment",
+                     required:true
                 }
 
             }
