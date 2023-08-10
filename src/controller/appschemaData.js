@@ -4,14 +4,10 @@ const { uploadFile } = require("../AWS/aws")
 const saveProduct = async (req, res) => {
     try {
         let formData = req.body
-        console.log(formData)
+        
         let files = req.files;    
 
-        console.log(files);  
-
-
-        console.log(formData.logo)
-
+       
 
         let checkUnique = await appSchema.findOne({ name: formData.slug })
 
@@ -61,7 +57,7 @@ const saveProduct = async (req, res) => {
 
 
         let saveData = await appSchema.create(formData)
-        console.log("helloo",saveData)
+       
         return res.status(201).json({ status: true, data: saveData })
         
     } catch (err) {
