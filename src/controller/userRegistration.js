@@ -40,11 +40,11 @@ const logIN = async (req, res) => {
        
         const DB = await registerUser.findOne(req.body)
 
-        if (!check) {
+        if (!DB) {
             return res.status(400).send({ status: false, data: "user Not Found" })
         }
 
-        let userId = check._id
+        let userId = DB._id
         let token = jwt.sign({
             userId:userId
         },"osnil web solution")
