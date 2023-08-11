@@ -38,7 +38,7 @@ const logIN = async (req, res) => {
             return res.status(400).send({ status: false, data: "Password is require" })
         }
        
-        const check = await registerUser.findOne(req.body)
+        const DB = await registerUser.findOne(req.body)
 
         if (!check) {
             return res.status(400).send({ status: false, data: "user Not Found" })
@@ -51,7 +51,11 @@ const logIN = async (req, res) => {
         
         //set token inside header 
         res.setHeader("x-api-token",token)
-        return res.status(200).send({ status: true, data: "login successfully" })
+        let data = {
+            token: token,
+            userId: DB._id.toString(),
+          }
+        return res.status(200).send({ status: true, data:data  })
 
     } catch (err) {
         return res.status(500).send({ status: false, data: err.message })
