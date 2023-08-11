@@ -1,13 +1,15 @@
 const express = require("express")
 const router = express.Router()
 
-const { logIN, signIN } = require("../controller/userRegistration")
+const { logIN, signIN ,getProfileDetails} = require("../controller/userRegistration")
 const { review } = require("../controller/review")
 const { savecategory, fetchSubcategory, fetchCategory } = require("../controller/category")
 const { getProduct, saveProduct, productDetails, productListByCategory } = require("../controller/appschemaData")
+const { authorisation, authentication } = require("../../middleware/middleware")
 
 router.post('/signup', signIN)
 router.post("/login", logIN)
+router.get("/profile/:userId",authentication,authorisation,getProfileDetails)
 
 
 router.post("/review", review)

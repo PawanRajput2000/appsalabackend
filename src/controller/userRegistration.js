@@ -1,4 +1,4 @@
-const registerUser = require("../models/userModel")
+const userModel = require("../models/userModel")
 const jwt = require("jsonwebtoken")
 
 
@@ -16,7 +16,7 @@ const signIN = async (req, res) => {
             return res.status(400).send({ status: false, data: "Password is require" })
         }
 
-        const data = await registerUser.create(req.body)
+        const data = await userModel.create(req.body)
         return res.status(201).send({ status: true, data: data })
 
 
@@ -38,7 +38,7 @@ const logIN = async (req, res) => {
             return res.status(400).send({ status: false, data: "Password is require" })
         }
        
-        const DB = await registerUser.findOne(req.body)
+        const DB = await userModel.findOne(req.body)
 
         if (!DB) {
             return res.status(400).send({ status: false, data: "user Not Found" })
@@ -65,5 +65,14 @@ const logIN = async (req, res) => {
 }
 
 
+const getProfileDetails = async(req,res)=>{
+    try{
+        const userId = req.params.userId
+        let data = await userModel.findOne({_id:userId})
+        return res.status(200).send({status: true, data:data })
 
-module.exports = { signIN, logIN }
+    }catch(err){
+        return res.status(500).send({ status: false, data: err.message })
+    }
+}
+module.exports = { signIN, logIN,getProfileDetails }  
