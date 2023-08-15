@@ -18,7 +18,7 @@ const user = new mongoose.Schema({
     role:{
         type :String,
         enum:["admin","user"],
-        required :true
+        
     },
     following_app: [
         {
@@ -31,37 +31,36 @@ const user = new mongoose.Schema({
                 enum: ["Using","Yes", "No", "Maybe",],
                 default: 'No'
 
-            }, subscription: {
+            }, 
+            subscription: {
                 date: {
                     type: Date,
                     default: Date.now()
                 }, amount: {
                     type: Number,
-                    required: true
+                    required: true,
+                    default: 0 
                 }, duration: {
                     type: Number,
-                    required: true
+                    required: true,
+                    default: 0
                 },package :{
                     type :String,
+                    default : 0
                     
-                },rating: {
-                    Usability: Number,
-                    Perfomance: Number,
-                    Features: Number,
-                    Support: Number,
-                    Value: Number,
-                    Company: Number,
-                },comment:{
+                },comment:[{
                      type :mongoose.Schema.Types.ObjectId,
-                     ref : "Comment",
+                     ref : "comment",
                      required:true
-                }
+                }]
 
             }
         }
     ],
 
-
+// enter user data ,
+//  pricing data ,
+ 
 
 
 

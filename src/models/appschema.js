@@ -89,7 +89,19 @@ const appSchema = new mongoose.Schema({
         },
         description: {
             type: String
+        },
+        duration: {
+            value: {
+                type: Number,
+                required: true
+            },
+            unit: {
+                type: String,
+                enum: ['week', 'month', 'year'],
+                required: true
+            }
         }
+        // lite ,standard ,premium  description
     }],
     appMedia: {
         officialScreenshots: {

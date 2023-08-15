@@ -1,15 +1,17 @@
 const express = require("express")
 const router = express.Router()
 
-const { logIN, signIN ,getProfileDetails} = require("../controller/userRegistration")
+const { logIN, signIN ,getProfileDetails, following_app} = require("../controller/userRegistration")
 const { review } = require("../controller/review")
 const { savecategory, fetchSubcategory, fetchCategory } = require("../controller/category")
 const { getProduct, saveProduct, productDetails, productListByCategory } = require("../controller/appschemaData")
 const { authorisation, authentication } = require("../../middleware/middleware")
+const { createComment } = require("../controller/commentController")
 
 router.post('/signup', signIN)
 router.post("/login", logIN)
-router.get("/profile/:userId",authentication,authorisation,getProfileDetails)
+router.put("/update-following-app/:userId",following_app)
+router.get("/profile/:userId",getProfileDetails)
 
 
 router.post("/review", review)
@@ -27,7 +29,7 @@ router.get("/category/:categoryname", productListByCategory)
 
 router.get("/product-list/:slug", productDetails)
 
-
+router.post("/comment/:userId/:applicationId",createComment)
 
 
 module.exports = router

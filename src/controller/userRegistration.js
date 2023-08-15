@@ -64,15 +64,55 @@ const logIN = async (req, res) => {
 
 }
 
-
-const getProfileDetails = async(req,res)=>{
-    try{
-        const userId = req.params.userId
-        let data = await userModel.findOne({_id:userId})
-        return res.status(200).send({status: true, data:data })
-
-    }catch(err){
-        return res.status(500).send({ status: false, data: err.message })
+const following_app = async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const updatedFollowingApp = req.body.following_app;
+  
+      // Update the user's following_app section
+      await userModel.findByIdAndUpdate(
+        userId,
+        { following_app: updatedFollowingApp },
+        { new: true }
+      );
+  
+      res.json({ message: "Following app updated successfully." });
+    } catch (error) {
+        console.log(error.message)
+      res.status(500).json({ error: "Internal server error" });
     }
-}
-module.exports = { signIN, logIN,getProfileDetails }  
+  }
+
+
+
+  const getProfileDetails = async (req, res) => {
+    try {
+      const userId = req.params.userId;
+  
+      const userWithComments = await userModel.findById(userId)
+        .populate({
+          path: "following_app.subscription.comment", // Correct the path
+          populate: {
+            path: "userId", // Corrected the path to "userId"
+            model: "user", // Adjust the model name as needed
+            select: "name" // Select the fields you want to populate from the Comment model
+          }
+        })
+        .select("-password"); // Exclude password from the response
+  
+      if (!userWithComments) {
+        return res.status(404).json({ error: "User not found" });
+      }
+  
+      res.json(userWithComments);
+    } catch (error) {
+      console.log(error.message);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  };
+  
+
+
+
+
+module.exports = { signIN, logIN,getProfileDetails , following_app}  
