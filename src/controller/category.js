@@ -50,7 +50,7 @@ const fetchCategory = async (req, res) => {
         data = data.map((item) => ({
             ...item.toObject(),
             _id: item._id.toString(), // Convert ObjectId to string for better representation
-        }));
+        }));                
 
         // Function to filter categories with non-empty subCategory_ids
         const filterNonEmptySubcategories = (category) => {
