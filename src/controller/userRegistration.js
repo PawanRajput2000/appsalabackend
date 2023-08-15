@@ -90,15 +90,22 @@ const following_app = async (req, res) => {
       const userId = req.params.userId;
   
       const userWithComments = await userModel.findById(userId)
-        .populate({
-          path: "following_app.subscription.comment", // Correct the path
-          populate: {
-            path: "userId", // Corrected the path to "userId"
-            model: "user", // Adjust the model name as needed
-            select: "name" // Select the fields you want to populate from the Comment model
-          }
-        })
-        .select("-password"); // Exclude password from the response
+      .populate({
+        path: "following_app.obj_id", // Populate the obj_id field
+        select: "name description" // Select the fields you want to populate from the App model
+      })
+      .populate({
+        path: "following_app.status" // Populate the status field
+      })
+      .populate({
+        path: "following_app.subscription.comment",
+        populate: {
+          path: "userId",
+          model: "user",
+          select: "name" // Select the fields you want to populate from the Comment model
+        }
+      })
+      .select("-password");
   
       if (!userWithComments) {
         return res.status(404).json({ error: "User not found" });
