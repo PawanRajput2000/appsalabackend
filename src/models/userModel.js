@@ -20,6 +20,11 @@ const user = new mongoose.Schema({
         enum:["admin","user"],
         
     },
+    saved :[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'App'
+
+    }],
     following_app: [
         {
             obj_id: {
@@ -28,7 +33,7 @@ const user = new mongoose.Schema({
             },
             status: {
                 type: String,
-                enum: ["Using","Yes", "No", "Maybe",],
+                enum: ["I am using it 👍","Yes, i want to 🤩", "No, i don't 😑", "Maybe 🤔",],
                 default: 'No'
 
             }, 
@@ -60,9 +65,6 @@ const user = new mongoose.Schema({
 
 // enter user data ,
 //  pricing data ,
- 
-
-
 
 }, {
     timestamps: true,
@@ -74,6 +76,6 @@ const user = new mongoose.Schema({
 module.exports = mongoose.model("user", user)
 
 
-
+//put , => 
 
 

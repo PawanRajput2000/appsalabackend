@@ -92,7 +92,7 @@ const following_app = async (req, res) => {
       const userWithComments = await userModel.findById(userId)
       .populate({
         path: "following_app.obj_id", // Populate the obj_id field
-        select: "name description" // Select the fields you want to populate from the App model
+         // Select the fields you want to populate from the App model
       })
       .populate({
         path: "following_app.status" // Populate the status field

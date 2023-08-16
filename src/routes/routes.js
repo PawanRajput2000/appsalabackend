@@ -25,6 +25,10 @@ router.get("/subcategory", fetchSubcategory)
 
 router.post("/create_products", saveProduct)
 router.get("/products", getProduct)
+router.post("/saved_product",authentication,saveProduct)
+
+
+
 router.get("/category/:categoryname", productListByCategory)
 
 router.get("/product-list/:slug", productDetails)

@@ -1,5 +1,6 @@
 const appSchema = require("../models/appschema")
-const { uploadFile } = require("../AWS/aws")
+const { uploadFile } = require("../AWS/aws");
+const userModel = require("../models/userModel");
 
 const saveProduct = async (req, res) => {
     try {
@@ -128,6 +129,46 @@ const productListByCategory = async (req, res) => {
     }
 
 }
+
+
+// const savedProduct = async(req,res)=>{
+//     try{
+//         const userId = decodetoken.userId
+//         const productId = req.body.productId
+
+//         let user = await userModel.findById(userId)
+
+//         user.save
+
+
+//     }catch(err){
+
+//     }
+// }
+
+const savedProduct = async (req, res) => {
+    try {
+        const userId = decodetoken.userId;
+        const productId = req.body.productId;
+
+        let user = await userModel.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Push the productId into the user's saved array
+        user.saved.push(productId);
+
+        await user.save();
+
+        return res.status(200).json({ message: 'Product saved successfully' });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
 
 
 

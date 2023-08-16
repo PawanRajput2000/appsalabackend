@@ -35,11 +35,11 @@ const createComment = async (req, res) => {
         followingApp.subscription = {};
       }
   
-      if (!followingApp.subscription.comments) {
-        followingApp.subscription.comments = [];
+      if (!followingApp.subscription.comment) {
+        followingApp.subscription.comment = [];
       }
   
-      followingApp.subscription.comments.push(savedComment._id);
+      followingApp.subscription.comment.push(savedComment._id);
       await user.save();
   
       res.json({ message: "Comment added successfully." });
