@@ -47,7 +47,7 @@ const logIN = async (req, res) => {
         let userId = DB._id
         let token = jwt.sign({
             userId:userId
-        },"osnil web solution")
+        },"osnilWebSolution")
         
         //set token inside header 
         res.setHeader("x-api-token",token)
@@ -90,33 +90,36 @@ const following_app = async (req, res) => {
       const userId = req.params.userId;
   
       const userWithComments = await userModel.findById(userId)
-      .populate({
-        path: "following_app.obj_id", // Populate the obj_id field
-         // Select the fields you want to populate from the App model
-      })
-      .populate({
-        path: "following_app.status" // Populate the status field
-      })
-      .populate({
-        path: "following_app.subscription.comment",
-        populate: {
-          path: "userId",
-          model: "user",
-          select: "name" // Select the fields you want to populate from the Comment model
-        }
-      })
-      .select("-password");
+        .populate({
+          path: "following_app.obj_id",
+        })
+        .populate({
+          path: "following_app.status",
+        })
+        .populate({
+          path: "following_app.subscription.comment",
+          populate: {
+            path: "userId",
+            model: "user",
+            select: "name",
+          },
+        })
+        .populate("saved") // Populate the "saved" field with app details
+        .select("-password");
   
       if (!userWithComments) {
         return res.status(404).json({ error: "User not found" });
       }
   
-      res.json(userWithComments);
+      
+      res.json({ status: true, data: userWithComments });
     } catch (error) {
       console.log(error.message);
       res.status(500).json({ error: "Internal server error" });
     }
   };
+  
+  
   
 
 

@@ -2,13 +2,13 @@ const appSchema = require("../models/appschema")
 const { uploadFile } = require("../AWS/aws");
 const userModel = require("../models/userModel");
 
-const saveProduct = async (req, res) => {
+const createProduct = async (req, res) => {
     try {
         let formData = req.body
-        
-        let files = req.files;    
 
-       
+        let files = req.files;
+
+
 
         let checkUnique = await appSchema.findOne({ name: formData.slug })
 
@@ -58,9 +58,9 @@ const saveProduct = async (req, res) => {
 
 
         let saveData = await appSchema.create(formData)
-       
+
         return res.status(201).json({ status: true, data: saveData })
-        
+
     } catch (err) {
         console.log("500", err.message)
         return res.status(500).json({ status: false, data: err.message })
@@ -131,24 +131,13 @@ const productListByCategory = async (req, res) => {
 }
 
 
-// const savedProduct = async(req,res)=>{
-//     try{
-//         const userId = decodetoken.userId
-//         const productId = req.body.productId
 
-//         let user = await userModel.findById(userId)
-
-//         user.save
-
-
-//     }catch(err){
-
-//     }
-// }
 
 const savedProduct = async (req, res) => {
     try {
-        const userId = decodetoken.userId;
+
+        const userId = req.decoded.userId;
+
         const productId = req.body.productId;
 
         let user = await userModel.findById(userId);
@@ -173,4 +162,4 @@ const savedProduct = async (req, res) => {
 
 
 
-module.exports = { getProduct, saveProduct, productDetails, productListByCategory }
+module.exports = { getProduct, savedProduct, createProduct, productDetails, productListByCategory }
