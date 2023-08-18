@@ -8,6 +8,7 @@ const app = express();
 app.use(cors())
 app.use(express.json());
 app.use(multer().any());
+
 app.use(express.urlencoded({ extended: true }));
 
 mongoose.connect(
@@ -17,7 +18,7 @@ mongoose.connect(
   .then(() => console.log("MongoDB is connected"))
   .catch((err) => console.log(err.message));
 
-app.use("/", router);
+app.use("/", router);    
 
 app.use((req, res) =>
   res.status(404).send({ status: false, message: "invalid Path url" })
