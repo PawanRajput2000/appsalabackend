@@ -7,20 +7,24 @@ const ObjectId = mongoose.Types.ObjectId
 
 const authentication = async (req, res, next) => {
     try {
-        const token = req.headers["x-api-token"]
+        const token = req.headers["x-api-token"];
+       
         if (!token) {
-            return res.status(404).send({ status: false, data: "Token must be provided" })
-
+            return res.status(401).json({ status: false, data: "Token must be provided" });
         }
 
-        let decodetoken = jwt.verify(token, "osnil web solution")
-        req.decodeToken = decodetoken
-        next()
-
+        jwt.verify(token, "osnilWebSolution", function (err, decoded) {
+            if (err) {
+                return res.status(401).send({ status: false, message: err.message });
+            }          
+            req.decoded = decoded;
+           next();
+        });  
     } catch (err) {
-        return res.status(500).send({ status: false, message: err.message })
+        return res.status(500).json({ status: false, message: err.message });
     }
-}
+};
+
 
 
 const authorisation = async (req, res, next) => {
@@ -47,8 +51,8 @@ const authorisation = async (req, res, next) => {
         next()
 
     } catch (err) {
-      return res.status(500).send({status:false,data:err.message})
+        return res.status(500).send({ status: false, data: err.message })
     }
 }
 
-module.exports ={authentication,authorisation}
+module.exports = { authentication, authorisation }

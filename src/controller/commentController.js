@@ -1,11 +1,13 @@
-const Comment = require("../models/commentSchema")
+const Comment = require("../models/commentSchema");
+
+const rating = require("../models/rating")
 const User = require("../models/userModel")
 
 
 
 const createComment = async (req, res) => {
     try {
-      const userId = req.params.userId;
+      const userId = req.decoded.userId;
       const applicationId = req.params.applicationId;
       const commentText = req.body.comment;
   
@@ -48,7 +50,36 @@ const createComment = async (req, res) => {
       res.status(500).json({ error: "Internal server error" });
     }
   };
+
+
+  //comment and rating for application 
+
+  const commentAndRating = async(req,res)=>{
+    try {
+      const userId = req.decoded.userId
+      const applicationId = req.params.applicationId
+
+      let data = {
+        userId :userId,
+        applicationId : applicationId
+      }
+
+      let ratingData = await rating.findOne(data)
+      let commentData = await Comment.find(data)
+      
+      let finalData = {
+        ratingInfo :ratingData,
+        commentInfo :commentData
+      }
+
+      return res.status(200).send({status :true , data :finalData})
+
+    }catch(err){
+      return res.status(500).send({status :false , data :err.message})
+    }
+  }
+
   
-  module.exports = { createComment };
+  module.exports = { createComment ,commentAndRating };
   
   

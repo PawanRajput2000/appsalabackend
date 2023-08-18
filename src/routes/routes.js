@@ -6,7 +6,8 @@ const { review } = require("../controller/review")
 const { savecategory, fetchSubcategory, fetchCategory } = require("../controller/category")
 const { getProduct, savedProduct, productDetails, productListByCategory,createProduct, deleteFromSaved } = require("../controller/appschemaData")
 const { authorisation, authentication } = require("../../middleware/middleware")
-const { createComment } = require("../controller/commentController")
+const { createComment, commentAndRating } = require("../controller/commentController")
+const { createRating } = require("../controller/ratingController")
 
 router.post('/signup', signIN)
 router.post("/login", logIN)
@@ -34,7 +35,15 @@ router.get("/category/:categoryname", productListByCategory)
 
 router.get("/product-list/:slug", productDetails)
 
-router.post("/comment/:userId/:applicationId",createComment)
+router.post("/comment/:applicationId",authentication,createComment)
+
+
+// Rating 
+router.post("/rating/:applicationId",authentication ,createRating)
+//commentAndRating 
+router.get("/commentswithRating/:applicationId",authentication,commentAndRating)
+
+
 
 
 module.exports = router
