@@ -12,6 +12,10 @@ const createComment = async (req, res) => {
     const applicationId = req.params.applicationId;
     const commentText = req.body.comment;
 
+    console.log(userId)
+    console.log(applicationId)
+    console.log(commentText)
+
     if (!applicationId) {
       return res.status(400).json({ error: "applicationId required" });
     }
