@@ -38,27 +38,30 @@ const createComment = async (req, res) => {
     }
 
     // Find the specific application within the user's following_app array
-    const followingApp = user.following_app.find(app => app.obj_id.toString() === applicationId);
-
-    if (!followingApp) {
-      return res.status(404).json({ error: "Application not found for the user" });
-    }
-
-    // Ensure necessary structures are initialized
-    if (!followingApp.subscription) {
-      followingApp.subscription = {};
-    }
-
-    if (!followingApp.subscription.comment) {
-      followingApp.subscription.comment = [];
-    }
-
-    // Add the comment to the subscription array
-    followingApp.subscription.comment.push(savedComment._id);
+    let followingApp = user.following_app.find(app => app.obj_id.toString() === applicationId);
 
     // If the user is not already following the application, follow it
-    if (!followingApp.status || followingApp.status === "No") {
-      followingApp.status = "Maybe 🤔";
+    if (!followingApp) {
+      followingApp = {
+        obj_id: applicationId,
+        status: "Maybe 🤔",
+        subscription: {
+          comment: [savedComment._id]
+        }
+      };
+      user.following_app.push(followingApp);
+    } else {
+      // Ensure necessary structures are initialized
+      if (!followingApp.subscription) {
+        followingApp.subscription = {};
+      }
+
+      if (!followingApp.subscription.comment) {
+        followingApp.subscription.comment = [];
+      }
+
+      // Add the comment to the subscription array
+      followingApp.subscription.comment.push(savedComment._id);
     }
 
     // Save the user with updated subscription and comment arrays
@@ -70,6 +73,7 @@ const createComment = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
      
 
