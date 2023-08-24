@@ -58,7 +58,7 @@ const createComment = async (req, res) => {
 
     // If the user is not already following the application, follow it
     if (!followingApp.status || followingApp.status === "No") {
-      followingApp.status = "Yes, i want to 🤩";
+      followingApp.status = "Maybe 🤔";
     }
 
     // Save the user with updated subscription and comment arrays

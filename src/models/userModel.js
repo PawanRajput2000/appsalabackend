@@ -53,16 +53,15 @@ const user = new mongoose.Schema({
                     type :String,
                     default : 0
                     
-                },
+                },comment:[{
+                     type :mongoose.Schema.Types.ObjectId,
+                     ref : "comment",
+                     required:true
+                }]
 
             }
         }
     ],
-    comment:[{
-        type :mongoose.Schema.Types.ObjectId,
-        ref : "comment",
-        required:true
-   }]
 
 // enter user data ,
 //  pricing data ,
