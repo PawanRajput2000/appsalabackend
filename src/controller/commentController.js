@@ -24,7 +24,7 @@ const createComment = async (req, res) => {
     const commentData = {
       userId: userId,
       applicationId: applicationId,
-      text: commentText
+      comment: commentText
     };
 
     // Save the new comment to the database
@@ -56,6 +56,11 @@ const createComment = async (req, res) => {
     // Add the comment to the subscription array
     followingApp.subscription.comment.push(savedComment._id);
 
+    // Ensure user's comment array is initialized
+    if (!user.comment) {
+      user.comment = [];
+    }
+
     // Add the comment to the user's comment array
     user.comment.push(savedComment._id);
 
@@ -68,6 +73,7 @@ const createComment = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
 
 
