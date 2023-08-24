@@ -12,10 +12,6 @@ const createComment = async (req, res) => {
     const applicationId = req.params.applicationId;
     const commentText = req.body.comment;
 
-    console.log(userId)
-    console.log(applicationId)
-    console.log(commentText)
-
     if (!applicationId) {
       return res.status(400).json({ error: "applicationId required" });
     }
@@ -60,23 +56,21 @@ const createComment = async (req, res) => {
     // Add the comment to the subscription array
     followingApp.subscription.comment.push(savedComment._id);
 
-    // Ensure user's comment array is initialized
-    if (!user.comment) {
-      user.comment = [];
+    // If the user is not already following the application, follow it
+    if (!followingApp.status || followingApp.status === "No") {
+      followingApp.status = "Yes, i want to 🤩";
     }
-
-    // Add the comment to the user's comment array
-    user.comment.push(savedComment._id);
 
     // Save the user with updated subscription and comment arrays
     await user.save();
 
-    res.json({ message: "Comment added successfully." });
+    res.json({ message: "Comment added successfully.", status: followingApp.status });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
 
 
