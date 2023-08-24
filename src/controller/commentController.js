@@ -12,43 +12,39 @@ const createComment = async (req, res) => {
     const applicationId = req.params.applicationId;
     const commentText = req.body.comment;
 
-
     if (!applicationId) {
-      return res.status(400).send({ data: "applicationId required" });
+      return res.status(400).json({ error: "applicationId required" });
     }
 
     if (!commentText) {
-      return res.status(404).send({ status: true, data: "User not found" });
+      return res.status(400).json({ error: "Comment text required" });
     }
 
-    const data = {
+    // Construct the comment data
+    const commentData = {
       userId: userId,
       applicationId: applicationId,
-      ...commentText
+      text: commentText
     };
-    console.log(data)
-
-    if (!data) {
-      return res.status(404).send({ status: true, data: "data" });
-    }
-
 
     // Save the new comment to the database
-    const savedComment = await Comment.create(data);
+    const savedComment = await Comment.create(commentData);
 
     // Find the user and update the correct nested comments array
     const user = await User.findById(userId);
 
     if (!user) {
-      return res.status(404).json({ status: true, data: "User not found" });
+      return res.status(404).json({ error: "User not found" });
     }
 
+    // Find the specific application within the user's following_app array
     const followingApp = user.following_app.find(app => app.obj_id.toString() === applicationId);
 
     if (!followingApp) {
-      return res.status(404).json({ status: true, data: "Application not found for the user" });
+      return res.status(404).json({ error: "Application not found for the user" });
     }
-    console.log("hello")
+
+    // Ensure necessary structures are initialized
     if (!followingApp.subscription) {
       followingApp.subscription = {};
     }
@@ -57,15 +53,22 @@ const createComment = async (req, res) => {
       followingApp.subscription.comment = [];
     }
 
+    // Add the comment to the subscription array
     followingApp.subscription.comment.push(savedComment._id);
+
+    // Add the comment to the user's comment array
+    user.comment.push(savedComment._id);
+
+    // Save the user with updated subscription and comment arrays
     await user.save();
 
     res.json({ message: "Comment added successfully." });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
 
 //comment and rating for application 
