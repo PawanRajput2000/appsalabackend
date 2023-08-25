@@ -32,6 +32,13 @@ const createRating = async (req, res) => {
       // Save the user with updated saved and following_app arrays
       await user.save();
   
+      // Update the user_ratings array with the new or updated rating
+      const existingRating = await Rating.findOneAndUpdate(
+        { userId: userId, applicationId: applicationId },
+        { $set: { rating: ratingValue } },
+        { new: true, upsert: true }
+      );
+  
       // Find the specific following_app object for the given application
       let followingApp = user.following_app.find(
         app => app.obj_id.toString() === applicationId
@@ -41,17 +48,13 @@ const createRating = async (req, res) => {
         return res.status(404).json({ error: "Following app not found" });
       }
   
-      // Update the user_ratings array with the new or updated rating
-      const existingRatingIndex = followingApp.subscription.user_ratings.findIndex(
-        r => r.applicationId === applicationId
+      // Update or add the rating in the user's subscription
+      const existingUserRating = followingApp.subscription.user_ratings.find(
+        r => r.toString() === existingRating._id.toString()
       );
-  
-      if (existingRatingIndex !== -1) {
-        // Update the existing rating
-        followingApp.subscription.user_ratings[existingRatingIndex].rating = ratingValue;
-      } else {
-        // Add a new rating
-        followingApp.subscription.user_ratings.push(data);
+      
+      if (!existingUserRating) {
+        followingApp.subscription.user_ratings.push(existingRating._id);
       }
   
       // Save the user with updated subscription and user_ratings arrays
@@ -59,10 +62,10 @@ const createRating = async (req, res) => {
   
       res.status(200).send({ status: true, data: "Rating added/updated successfully." });
     } catch (err) {
-        console.log(err.message)
+      console.error(err.message);
       res.status(500).send({ status: false, data: err.message });
     }
   };
   
-
-module.exports = { createRating };
+  module.exports = { createRating };
+  

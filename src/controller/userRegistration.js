@@ -101,9 +101,9 @@ const following_app = async (req, res) => {
           },
         })
         .populate({
-          path: "following_app.subscription.user_ratings", // Populate the user_ratings field
-          model: "rating", // Assuming "rating" is the name of your rating model
-          select: "rating", // Select the rating field from the rating model
+          path: "following_app.subscription.user_ratings",
+          model: "rating",
+          select: "rating",
         })
         .populate("saved")
         .select("-password");
@@ -119,13 +119,7 @@ const following_app = async (req, res) => {
     }
   };
   
-  module.exports = getProfileDetails;
-  
-  
-  
-  
-
-
+ 
 
 
 module.exports = { signIN, logIN,getProfileDetails , following_app}  
