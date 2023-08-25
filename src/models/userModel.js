@@ -57,7 +57,11 @@ const user = new mongoose.Schema({
                      type :mongoose.Schema.Types.ObjectId,
                      ref : "comment",
                      required:true
-                }]
+                }],user_ratings :[{
+                    type :mongoose.Schema.Types.ObjectId,
+                    ref : "rating",
+                    required:true 
+                   }]
 
             }
         }

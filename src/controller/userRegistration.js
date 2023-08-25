@@ -84,17 +84,13 @@ const following_app = async (req, res) => {
   }
 
 
-
   const getProfileDetails = async (req, res) => {
     try {
       const userId = req.params.userId;
   
-      const userWithComments = await userModel.findById(userId)
+      const userWithDetails = await userModel.findById(userId)
         .populate({
           path: "following_app.obj_id",
-        })
-        .populate({
-          path: "following_app.status",
         })
         .populate({
           path: "following_app.subscription.comment",
@@ -104,20 +100,27 @@ const following_app = async (req, res) => {
             select: "name",
           },
         })
-        .populate("saved") // Populate the "saved" field with app details
+        .populate({
+          path: "following_app.subscription.user_ratings", // Populate the user_ratings field
+          model: "rating", // Assuming "rating" is the name of your rating model
+          select: "rating", // Select the rating field from the rating model
+        })
+        .populate("saved")
         .select("-password");
   
-      if (!userWithComments) {
+      if (!userWithDetails) {
         return res.status(404).json({ error: "User not found" });
       }
   
-      
-      res.json({ status: true, data: userWithComments });
+      res.json({ status: true, data: userWithDetails });
     } catch (error) {
-      console.log(error.message);
+      console.error(error.message);
       res.status(500).json({ error: "Internal server error" });
     }
   };
+  
+  module.exports = getProfileDetails;
+  
   
   
   
