@@ -38,6 +38,18 @@ const createComment = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
+    // Check if the application is in the user's saved array
+    const savedAppIndex = user.saved.indexOf(applicationId);
+    if (savedAppIndex !== -1) {
+      // Remove the application from the saved array
+      user.saved.splice(savedAppIndex, 1);
+    }
+
+    // ... (rest of your code for updating user's following_app array)
+
+    // Save the user with updated saved and following_app arrays
+    await user.save();
+
     // Find the specific application within the user's following_app array
     let followingApp = user.following_app.find(app => app.obj_id.toString() === applicationId);
 
@@ -76,7 +88,7 @@ const createComment = async (req, res) => {
 };
 
 
-     
+
 
 
 
@@ -109,16 +121,30 @@ const commentAndRating = async (req, res) => {
 
 const deleteComment = async (req, res) => {
   try {
-    const userId = req.decoded.userId
-    const commentId = req.params.commentId
-    
-    await comment.dee
+    const userId = req.decoded.userId;
+    const commentId = req.params.commentId;
+    console.log(userId, typeof (commentId))
 
+
+    // Remove the comment ID from the user's comment array
+    await User.updateOne(
+      { _id: userId, 'following_app.comment': commentId },
+      { $pull: { 'following_app.$.comment': commentId } }
+    );
+
+    // Assuming Comment.delete() is a function that deletes the comment
+    await Comment.findOneAndDelete(req.body);
+
+    // Send a success response
+    res.status(200).json({ message: 'Comment deleted successfully' });
   } catch (err) {
-
+    // Handle errors
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred' });
   }
-}
+};
 
 
-module.exports = { createComment, commentAndRating };
+
+module.exports = { createComment, commentAndRating, deleteComment };
 

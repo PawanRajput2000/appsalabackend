@@ -6,7 +6,7 @@ const { review } = require("../controller/review")
 const { savecategory, fetchSubcategory, fetchCategory } = require("../controller/category")
 const { getProduct, savedProduct, productDetails, productListByCategory,createProduct, deleteFromSaved } = require("../controller/appschemaData")
 const { authorisation, authentication } = require("../../middleware/middleware")
-const { createComment, commentAndRating } = require("../controller/commentController")
+const { createComment, commentAndRating, deleteComment } = require("../controller/commentController")
 const { createRating } = require("../controller/ratingController")
 
 router.post('/signup', signIN)
@@ -43,6 +43,9 @@ router.post("/rating/:applicationId",authentication ,createRating)
 //commentAndRating 
 router.get("/commentswithRating/:applicationId",authentication,commentAndRating)
 
+
+//remove comment
+router.delete("/deleteComment/:commentId",authentication,deleteComment)
 
 
 

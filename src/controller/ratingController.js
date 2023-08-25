@@ -1,4 +1,5 @@
 const rating = require("../models/rating");
+const User = require("../models/userModel")
 
 const createRating = async (req, res) => {
     try {
@@ -11,6 +12,26 @@ const createRating = async (req, res) => {
             applicationId: applicationId,
             rating: ratingValue // Use the renamed variable here
         };
+
+
+        // Find the user and update the correct nested comments array
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        // Check if the application is in the user's saved array
+        const savedAppIndex = user.saved.indexOf(applicationId);
+        if (savedAppIndex !== -1) {
+            // Remove the application from the saved array
+            user.saved.splice(savedAppIndex, 1);
+        }
+
+        // ... (rest of your code for updating user's following_app array)
+
+        // Save the user with updated saved and following_app arrays
+        await user.save();
 
         // Attempt to find an existing rating for the given user and application
         let findInDb = await rating.findOneAndUpdate(
