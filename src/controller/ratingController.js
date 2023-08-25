@@ -33,7 +33,7 @@ const createRating = async (req, res) => {
       await user.save();
   
       // Update the user_ratings array with the new or updated rating
-      const existingRating = await Rating.findOneAndUpdate(
+      const existingRating = await rating.findOneAndUpdate(
         { userId: userId, applicationId: applicationId },
         { $set: { rating: ratingValue } },
         { new: true, upsert: true }
