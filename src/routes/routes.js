@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router()
 
-const { logIN, signIN ,getProfileDetails, following_app} = require("../controller/userRegistration")
+const { logIN, signup ,getProfileDetails, following_app} = require("../controller/userRegistration")
 const { review } = require("../controller/review")
 const { savecategory, fetchSubcategory, fetchCategory } = require("../controller/category")
 const { getProduct, savedProduct, productDetails, productListByCategory,createProduct, deleteFromSaved } = require("../controller/appschemaData")
@@ -9,7 +9,7 @@ const { authorisation, authentication } = require("../../middleware/middleware")
 const { createComment, commentAndRating, deleteComment } = require("../controller/commentController")
 const { createRating } = require("../controller/ratingController")
 
-router.post('/signup', signIN)
+router.post('/signup', signup)
 router.post("/login", logIN)
 router.put("/update-following-app/:userId",following_app)
 router.get("/profile/:userId",getProfileDetails)

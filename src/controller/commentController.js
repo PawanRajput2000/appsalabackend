@@ -11,7 +11,7 @@ const createComment = async (req, res) => {
     const userId = req.decoded.userId;
     const applicationId = req.params.applicationId;
     const commentText = req.body.comment;
-    console.log(applicationId)
+    
 
     if (!applicationId) {
       return res.status(400).json({ error: "applicationId required" });
@@ -121,9 +121,10 @@ const commentAndRating = async (req, res) => {
 
 const deleteComment = async (req, res) => {
   try {
+    
     const userId = req.decoded.userId;
     const commentId = req.params.commentId;
-    console.log(userId, typeof (commentId))
+    console.log(userId, commentId)
 
 
     // Remove the comment ID from the user's comment array
@@ -133,7 +134,7 @@ const deleteComment = async (req, res) => {
     );
 
     // Assuming Comment.delete() is a function that deletes the comment
-    await Comment.findOneAndDelete(req.body);
+    await Comment.findOneAndDelete({userId : userId, _id : commentId});
 
     // Send a success response
     res.status(200).json({ message: 'Comment deleted successfully' });

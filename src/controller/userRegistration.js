@@ -2,7 +2,7 @@ const userModel = require("../models/userModel")
 const jwt = require("jsonwebtoken")
 
 
-const signIN = async (req, res) => {
+const signup = async (req, res) => {
     try {
         const { name, email, password } = req.body
         console.log(req.body)
@@ -122,4 +122,4 @@ const following_app = async (req, res) => {
  
 
 
-module.exports = { signIN, logIN,getProfileDetails , following_app}  
+module.exports = { signup, logIN,getProfileDetails , following_app}  
