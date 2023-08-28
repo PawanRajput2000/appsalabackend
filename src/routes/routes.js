@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router()
 
-const { logIN, signup ,getProfileDetails, following_app} = require("../controller/userRegistration")
+const { logIN, signup ,getProfileDetails, following_app, updateUser} = require("../controller/userRegistration")
 const { review } = require("../controller/review")
 const { savecategory, fetchSubcategory, fetchCategory } = require("../controller/category")
 const { getProduct, savedProduct, productDetails, productListByCategory,createProduct, deleteFromSaved } = require("../controller/appschemaData")
@@ -13,6 +13,7 @@ router.post('/signup', signup)
 router.post("/login", logIN)
 router.put("/update-following-app/:userId",following_app)
 router.get("/profile/:userId",getProfileDetails)
+router.put('/update-user/:userId', authentication,authorisation,updateUser)
 
 
 router.post("/review", review)
