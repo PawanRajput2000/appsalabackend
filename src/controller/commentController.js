@@ -14,11 +14,11 @@ const createComment = async (req, res) => {
     
 
     if (!applicationId) {
-      return res.status(400).json({ error: "applicationId required" });
+      return res.status(400).json({ status:true ,data: "applicationId required" });
     }
 
     if (!commentText) {
-      return res.status(400).json({ error: "Comment text required" });
+      return res.status(400).json({ status:true ,data: "Comment text required" });
     }
 
     // Construct the comment data
@@ -35,7 +35,7 @@ const createComment = async (req, res) => {
     const user = await User.findById(userId);
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ status:true ,data: "User not found" });
     }
 
     // Check if the application is in the user's saved array

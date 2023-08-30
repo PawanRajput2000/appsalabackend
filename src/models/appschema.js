@@ -117,6 +117,8 @@ const appSchema = new mongoose.Schema({
 
         }
     }
+},{
+    timestamps :true 
 });
 
 // Create the App model
