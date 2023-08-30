@@ -3,6 +3,11 @@ const Comment = require("../models/commentSchema");
 
 const rating = require("../models/rating")
 const User = require("../models/userModel")
+let ioInstance; // Initialize Socket.IO instance
+
+const setSocket = (io) => {
+  ioInstance = io; // Set the Socket.IO instance
+};
 
 
 
@@ -79,9 +84,9 @@ const createComment = async (req, res) => {
     
     // Save the user with updated subscription and comment arrays
     await user.save();
-    // Emit a "newComment" event to notify connected clients
-    io.emit("newComment", savedComment);
-
+    if (ioInstance) {
+      ioInstance.emit("newComment", savedComment);
+    }
 
     res.json({ message: "Comment added successfully.", status: followingApp.status });
   } catch (error) {
@@ -150,5 +155,5 @@ const deleteComment = async (req, res) => {
 
 
 
-module.exports = { createComment, commentAndRating, deleteComment };
+module.exports = {setSocket, createComment, commentAndRating, deleteComment };
 
