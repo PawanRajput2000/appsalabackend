@@ -76,9 +76,12 @@ const createComment = async (req, res) => {
       // Add the comment to the subscription array
       followingApp.subscription.comment.push(savedComment._id);
     }
-
+    
     // Save the user with updated subscription and comment arrays
     await user.save();
+    // Emit a "newComment" event to notify connected clients
+    io.emit("newComment", savedComment);
+
 
     res.json({ message: "Comment added successfully.", status: followingApp.status });
   } catch (error) {
