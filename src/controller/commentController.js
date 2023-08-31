@@ -16,7 +16,7 @@ const createComment = async (req, res) => {
     const userId = req.decoded.userId;
     const applicationId = req.params.applicationId;
     const commentText = req.body.comment;
-    
+     console.log("done phase 1")
 
     if (!applicationId) {
       return res.status(400).json({ status:true ,data: "applicationId required" });
@@ -35,7 +35,11 @@ const createComment = async (req, res) => {
 
     // Save the new comment to the database
     const savedComment = await Comment.create(commentData);
-
+    
+    if (ioInstance) {
+      ioInstance.emit("newComment", savedComment); // Emit the new comment data
+    }
+    console.log("done phase 2")
     // Find the user and update the correct nested comments array
     const user = await User.findById(userId);
 
@@ -84,10 +88,7 @@ const createComment = async (req, res) => {
     
     // Save the user with updated subscription and comment arrays
     await user.save();
-    if (ioInstance) {
-      ioInstance.emit("newComment", savedComment);
-    }
-
+  
     res.json({ message: "Comment added successfully.", status: followingApp.status });
   } catch (error) {
     console.error(error.message);

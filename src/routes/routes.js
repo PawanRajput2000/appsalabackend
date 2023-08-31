@@ -36,7 +36,7 @@ router.get("/category/:categoryname", productListByCategory)
 
 router.get("/product-list/:slug", productDetails)
 
-router.post("/comment/:applicationId",authentication,createComment)
+router.post("/comment/:applicationId",createComment)
 
 
 // Rating 
@@ -46,7 +46,7 @@ router.get("/commentswithRating/:applicationId",authentication,commentAndRating)
 
 
 //remove comment
-router.delete("/deleteComment/:commentId",authentication,deleteComment)
+router.delete("/deleteComment/:commentId",deleteComment)
 
 
 
