@@ -16,6 +16,7 @@ const createComment = async (req, res) => {
     const userId = req.decoded.userId;
     const applicationId = req.params.applicationId;
     const commentText = req.body.comment;
+    console.log(userId)
      console.log("done phase 1")
 
     if (!applicationId) {
