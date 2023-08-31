@@ -13,7 +13,7 @@ const setSocket = (io) => {
 
 const createComment = async (req, res) => {
   try {
-    const userId = req.decoded.userId;
+    const userId = "64cb4594dc62616ed3486b4a";
     const applicationId = req.params.applicationId;
     const commentText = req.body.comment;
     console.log(userId)
