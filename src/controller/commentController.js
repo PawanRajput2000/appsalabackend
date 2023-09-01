@@ -82,8 +82,10 @@ const createComment = async (req, res) => {
     
     // Save the user with updated subscription and comment arrays
     await user.save();
-  
-    res.json({ message: "Comment added successfully.", comment:commentText  });
+    
+
+    // here i am sending comment to frontend because that will reflect on latest comment lists 
+    res.json({ status :true ,message: "Comment added successfully.", comment:commentText  });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ error: "Internal server error" });
