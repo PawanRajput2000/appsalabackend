@@ -125,7 +125,7 @@ const getProfileDetails = async (req, res) => {
 // Update user's name, email, and password
 const updateUser = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.params.userId;
     const { currentPassword, newPassword, name, email } = req.body;
 
     const user = await userModel.findOne({ _id: userId });
