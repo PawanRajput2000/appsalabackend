@@ -127,7 +127,7 @@ const updateUser = async (req, res) => {
   try {
     const userId = req.params.id;
     const { currentPassword, newPassword, name, email } = req.body;
-  consol.log(userId)
+
     const user = await userModel.findOne({ _id: userId });
 
     if (!user) {
