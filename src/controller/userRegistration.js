@@ -13,7 +13,7 @@ const signup = async (req, res) => {
     if (!email) {
       return res.status(400).send({ status: false, data: "Email is require" })
     }
-     if (!password) {
+    if (!password) {
       return res.status(400).send({ status: false, data: "Password is require" })
     }
 
@@ -124,31 +124,39 @@ const getProfileDetails = async (req, res) => {
 
 // Update user's name, email, and password
 const updateUser = async (req, res) => {
-  const userId = parseInt(req.params.id);
-  const { currentPassword, newPassword, name, email } = req.body;
+  try {
+    const userId = req.params.id;
+    const { currentPassword, newPassword, name, email } = req.body;
 
-  const user = userModel.find(user => user.id === userId);
+    const user = await userModel.findOne({ id: userId });
 
-  if (!user) {
-    return res.status(404).json({ status :true , data: 'User not found' });
-  }
+    if (!user) {
+      return res.status(404).json({ status: false, data: 'User not found' });
+    }
 
-  if (user.password !== currentPassword) {
-    return res.status(401).json({ status :true , data: 'Current password is incorrect' });
-  }
+    if (currentPassword) {
+      if (user.password !== currentPassword) {
+        return res.status(401).json({ status: false, data: 'Current password is incorrect' });
+      }
+    }
+    // Update name, email, and password if provided
+    if (name) {
+      user.name = name;
+    }
+    if (email) {
+      user.email = email;
+    }
+    if (newPassword) {
+      user.password = newPassword;
+    }
 
-  // Update name, email, and password if provided
-  if (name) {
-    user.name = name;
-  }
-  if (email) {
-    user.email = email;
-  }
-  if (newPassword) {
-    user.password = newPassword;
-  }
+    await user.save();
 
-  return res.json({ status:true ,data: 'User information updated successfully', user });
+    return res.json({ status: true, data: 'User information updated successfully', user });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ status: false, data: 'Internal server error' });
+  }
 };
 
 
