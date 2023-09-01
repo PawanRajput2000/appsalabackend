@@ -3,11 +3,6 @@ const Comment = require("../models/commentSchema");
 
 const rating = require("../models/rating")
 const User = require("../models/userModel")
-let ioInstance; // Initialize Socket.IO instance
-
-const setSocket = (io) => {
-  ioInstance = io; // Set the Socket.IO instance
-};
 
 
 
@@ -37,9 +32,7 @@ const createComment = async (req, res) => {
     // Save the new comment to the database
     const savedComment = await Comment.create(commentData);
     
-    if (ioInstance) {
-      ioInstance.emit("newComment", savedComment); // Emit the new comment data
-    }
+    
     console.log("done phase 2")
     // Find the user and update the correct nested comments array
     const user = await User.findById(userId);
@@ -157,5 +150,5 @@ const deleteComment = async (req, res) => {
 
 
 
-module.exports = {setSocket, createComment, commentAndRating, deleteComment };
+module.exports = { createComment, commentAndRating, deleteComment };
 

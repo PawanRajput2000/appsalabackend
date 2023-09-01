@@ -36,10 +36,10 @@ router.get("/category/:categoryname", productListByCategory)
 
 router.get("/product-list/:slug", productDetails)
 
-router.post("/comment/:applicationId",createComment)
+router.post("/comment/:applicationId",authentication,createComment)
 
 
-// Rating 
+// Rating     
 router.post("/rating/:applicationId",authentication ,createRating)
 //commentAndRating 
 router.get("/commentswithRating/:applicationId",authentication,commentAndRating)

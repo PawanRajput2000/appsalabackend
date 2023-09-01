@@ -12,7 +12,8 @@ const signup = async (req, res) => {
     }
     if (!email) {
       return res.status(400).send({ status: false, data: "Email is require" })
-    } if (!password) {
+    }
+     if (!password) {
       return res.status(400).send({ status: false, data: "Password is require" })
     }
 

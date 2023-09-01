@@ -7,12 +7,6 @@ const http = require("http");
 const socketIO = require("socket.io");
 
 const app = express();
-const server = http.createServer(app);
-const io = socketIO(server);
-
-// Use the Socket.IO server instance in your API functions
-const commentController = require("./controller/commentController");
-commentController.setSocket(io);
 
 // Enable Cross-Origin Resource Sharing (CORS)
 app.use(cors());
@@ -25,27 +19,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use(multer().any());
 
 // MongoDB Atlas connection
-mongoose.connect(
-  "mongodb+srv://indiaProject:LEsbp5k9osyQcp6Q@indiaproject.1go0lry.mongodb.net/",
-  { useNewUrlParser: true, useUnifiedTopology: true }
-)
-.then(() => console.log("MongoDB is connected"))
-.catch((err) => console.error("MongoDB connection error:", err));
+mongoose
+  .connect("mongodb+srv://indiaProject:LEsbp5k9osyQcp6Q@indiaproject.1go0lry.mongodb.net/", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("MongoDB is connected");
 
-// Socket.IO connection handling
-io.on("connection", (socket) => {
-  console.log("A user connected");
-
-  socket.on("newComment", (comment) => {
-    socket.broadcast.emit("newComment", comment);
-  });
-
-  socket.on("commentDeleted", (commentId) => {
-    socket.broadcast.emit("commentDeleted", commentId);
-  });
-
-  // ... Add more event handling here
-});
+    
+  })
+  .catch((err) => console.error("MongoDB connection error:", err));
 
 // Use the router for handling routes
 app.use("/", router);
@@ -55,8 +39,37 @@ app.use((req, res) =>
   res.status(404).json({ status: false, message: "Invalid path URL" })
 );
 
-// Start the server
+// Start the Express server
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`Express app running on port ${PORT}`);
 });
+
+// Function to start the WebSocket server
+// function startWebSocketServer() {
+//   const server = http.createServer(app);
+//   const io = socketIO(server);
+
+//   // Socket.IO connection handling
+//   io.on("connection", (socket) => {
+//     console.log("A user connected");
+
+//     socket.on("newComment", (comment) => {
+//       socket.broadcast.emit("newComment", comment);
+//     });
+
+//     socket.on("commentDeleted", (commentId) => {
+//       socket.broadcast.emit("commentDeleted", commentId);
+//     });
+
+//     // Log any potential errors
+//     socket.on("error", (error) => {
+//       console.error("WebSocket error:", error);
+//     });
+//   });
+
+//   // Start the WebSocket server
+//   server.listen(PORT + 1, () => {
+//     console.log(`WebSocket server running on port ${PORT + 1}`);
+//   });
+// }
