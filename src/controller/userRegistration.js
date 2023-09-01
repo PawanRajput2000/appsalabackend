@@ -122,7 +122,7 @@ const getProfileDetails = async (req, res) => {
 
 
 
-// Update user's name, email, and password
+// Update user's name, email, and password (optional)
 const updateUser = async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -139,6 +139,7 @@ const updateUser = async (req, res) => {
         return res.status(401).json({ status: false, data: 'Current password is incorrect' });
       }
     }
+
     // Update name, email, and password if provided
     if (name) {
       user.name = name;
@@ -158,6 +159,7 @@ const updateUser = async (req, res) => {
     return res.status(500).json({ status: false, data: 'Internal server error' });
   }
 };
+
 
 
 module.exports = { signup, logIN, getProfileDetails, following_app, updateUser }  
