@@ -162,4 +162,47 @@ const updateUser = async (req, res) => {
 
 
 
-module.exports = { signup, logIN, getProfileDetails, following_app, updateUser }  
+const updateApplicationStatus = async (req, res) => {
+  try {
+    // Find the user by their ID
+    const userId = req.decoded.userId;
+    const applicationId = req.params.applicationId;
+    const newStatus = req.body.status; // Use req.body.status
+
+    const user = await userModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    // Find the application within the "following_app" array by its ID
+    const application = user.following_app.find((app) =>
+      app.obj_id.equals(applicationId)
+    );
+
+    if (!application) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Application not found" });
+    }
+
+    // Update the status of the application
+    application.status = newStatus;
+
+    // Save the user with the updated application status
+    await user.save();
+
+    return res.json({
+      success: true,
+      message: "Application status updated successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+
+
+
+module.exports = { signup, logIN, getProfileDetails, following_app, updateUser ,updateApplicationStatus}  
