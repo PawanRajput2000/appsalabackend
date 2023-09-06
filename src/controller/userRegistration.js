@@ -13,6 +13,10 @@ const signup = async (req, res) => {
     if (!email) {
       return res.status(400).send({ status: false, data: "Email is require" })
     }
+    let checkUnique = await userModel.findOne({email: email})
+    if(checkUnique){
+      return res.status(400).send({ status: false, data: "email should be unique" })
+    }
     if (!password) {
       return res.status(400).send({ status: false, data: "Password is require" })
     }
