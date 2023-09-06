@@ -1,10 +1,10 @@
 const express = require("express")
 const router = express.Router()
 
-const { logIN, signup ,getProfileDetails, following_app, updateUser,updateApplicationStatus} = require("../controller/userRegistration")
+const { logIN, signup ,getProfileDetails, following_app, updateUser,updateApplicationStatus,updatePricingInfoInUserSchema} = require("../controller/userRegistration")
 const { review } = require("../controller/review")
 const { savecategory, fetchSubcategory, fetchCategory } = require("../controller/category")
-const { getProduct, savedProduct, productDetails, productListByCategory,createProduct, deleteFromSaved } = require("../controller/appschemaData")
+const { getProduct, savedProduct, productDetails, productListByCategory,createProduct, deleteFromSaved ,productpricing} = require("../controller/appschemaData")
 const { authorisation, authentication } = require("../../middleware/middleware")
 const { createComment, commentAndRating, deleteComment } = require("../controller/commentController")
 const { createRating } = require("../controller/ratingController")
@@ -15,6 +15,7 @@ router.put("/update-following-app/:userId",following_app)
 router.get("/profile/:userId",getProfileDetails)
 router.put('/update-user/:userId', authentication,authorisation,updateUser)
 router.put("/update-status/:applicationId",authentication,updateApplicationStatus)
+router.put("/updatePricingInfoInUserSchema/:applicationId",authentication,updatePricingInfoInUserSchema)
 
 
 router.post("/review", review)
@@ -30,6 +31,7 @@ router.post("/create_products", createProduct)
 router.get("/products", getProduct)
 router.post("/saved_product",authentication,savedProduct)
 router.post("/deleteFromSaved",authentication,deleteFromSaved)
+router.get("/pricinginfo/:applicationId",productpricing)
 
 
 

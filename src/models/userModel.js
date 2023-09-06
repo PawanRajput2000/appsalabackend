@@ -53,7 +53,8 @@ const user = new mongoose.Schema({
                     type :String,
                     default : "trying"
                     
-                },comment:[{
+                },
+                comment:[{
                      type :mongoose.Schema.Types.ObjectId,
                      ref : "comment",
                      required:true

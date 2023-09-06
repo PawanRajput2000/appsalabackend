@@ -162,6 +162,9 @@ const updateUser = async (req, res) => {
 
 
 
+
+
+
 const updateApplicationStatus = async (req, res) => {
   try {
     // Find the user by their ID
@@ -202,7 +205,53 @@ const updateApplicationStatus = async (req, res) => {
 };
 
 
+// Define an API endpoint to update the subscription details
+const updatePricingInfoInUserSchema = async (req, res) => {
+  try {
+    const userId = req.decoded.userId;
+    const { applicationId } = req.params;
+
+    const user = await userModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Find the specific application within the following_app array
+    const application = user.following_app.find((app) =>
+      app.obj_id.equals(applicationId)
+    );
+
+    if (!application) {
+      return res.status(404).json({ message: 'Application not found' });
+    }
+
+    // Update the subscription details
+    if (req.body.date) {
+      application.subscription.date = new Date(req.body.date);
+    } else {
+      application.subscription.date = new Date();
+    }
+
+    application.subscription.amount = req.body.amount || 0; // You can get this from the request body
+    application.subscription.duration = req.body.duration || 0; // You can get this from the request body
+    application.subscription.package = req.body.package || 'trying'; // You can get this from the request body
+
+    // Save the updated user
+    await user.save();
+
+    res.status(200).json({ message: 'Subscription details updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
 
 
 
-module.exports = { signup, logIN, getProfileDetails, following_app, updateUser ,updateApplicationStatus}  
+
+module.exports = {
+  signup, logIN, getProfileDetails, following_app,
+  updateUser, updateApplicationStatus,
+  updatePricingInfoInUserSchema
+}  

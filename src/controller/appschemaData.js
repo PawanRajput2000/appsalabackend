@@ -189,6 +189,34 @@ const deleteFromSaved = async (req, res) => {
 };
 
 
+const productpricing = async (req, res) => {
+    try {
+        const applicationId = req.params.applicationId
 
+        if (!applicationId) {
+            return res.status(400).json({ status: false, data: "application not avaliable" });
+        }
 
-module.exports = { getProduct, savedProduct, createProduct, productDetails, productListByCategory, deleteFromSaved }
+        const data = await appSchema.findById(applicationId)
+        if (!data) {
+            return res.status(404).json({ status: false, data: "Pricing not available for this application" });
+        }
+        const info = {
+            name: data.name,
+            pricing: data.appPricing
+        }
+
+        return res.status(200).json({ status: true, data: info });
+
+    } catch (err) {
+        console.log(err.message)
+        return res.status(500).json({ status: false, data: "internal server error" });
+
+    }
+}
+
+module.exports = {
+    getProduct, savedProduct, createProduct,
+    productDetails, productListByCategory, deleteFromSaved,
+    productpricing
+}

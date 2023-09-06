@@ -81,15 +81,25 @@ const appSchema = new mongoose.Schema({
         }
     },
     appPricing: [{
-        name: {
-            type: String
+        package: {
+            type: String,
+            required :true 
         },
         price: {
-            type: Number
+            type: Number,
+            required :true 
         },
         description: {
-            type: String
+            type: String,
+            required :true 
         },
+        duration:{
+            type :String,
+            enum :["week","month","year"],
+            required :true ,
+            default : "month"
+
+        }
         // duration: {
         //     value: {
         //         type: Number,
