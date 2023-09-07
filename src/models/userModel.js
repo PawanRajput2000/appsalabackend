@@ -46,9 +46,9 @@ const user = new mongoose.Schema({
                     required: true,
                     default: 0 
                 }, duration: {
-                    type: Number,
+                    type: String,
                     required: true,
-                    default: 0
+                    
                 },package :{
                     type :String,
                     default : "trying"

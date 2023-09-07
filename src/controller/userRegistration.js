@@ -262,7 +262,7 @@ const updatePricingInfoInUserSchema = async (req, res) => {
     }
 
     if (!isNaN(req.body.duration)) {
-      application.subscription.duration = parseInt(req.body.duration);
+      application.subscription.duration = req.body.duration;
     } else {
       return res.status(400).json({ message: 'Invalid duration format' });
     }
