@@ -209,7 +209,6 @@ const updateApplicationStatus = async (req, res) => {
 };
 
 
-// Define an API endpoint to update the subscription details
 const updatePricingInfoInUserSchema = async (req, res) => {
   try {
     const userId = req.decoded.userId;
@@ -230,16 +229,32 @@ const updatePricingInfoInUserSchema = async (req, res) => {
       return res.status(404).json({ message: 'Application not found' });
     }
 
-    // Update the subscription details
+    // Validate and update the subscription details
     if (req.body.date) {
-      application.subscription.date = new Date(req.body.date);
+      const parsedDate = new Date(req.body.date);
+      if (isNaN(parsedDate.getTime())) {
+        return res.status(400).json({ message: 'Invalid date format' });
+      }
+      application.subscription.date = parsedDate;
     } else {
       application.subscription.date = new Date();
     }
 
-    application.subscription.amount = req.body.amount || 0; // You can get this from the request body
-    application.subscription.duration = req.body.duration || 0; // You can get this from the request body
-    application.subscription.package = req.body.package || 'trying'; // You can get this from the request body
+    if (req.body.amount !== undefined) {
+      application.subscription.amount = req.body.amount;
+    }
+
+    if (!isNaN(req.body.duration)) {
+      application.subscription.duration = parseInt(req.body.duration);
+    } else {
+      return res.status(400).json({ message: 'Invalid duration format' });
+    }
+
+    if (req.body.package) {
+      application.subscription.package = req.body.package;
+    } else {
+      application.subscription.package = 'trying';
+    }
 
     // Save the updated user
     await user.save();
@@ -250,7 +265,6 @@ const updatePricingInfoInUserSchema = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 
 
