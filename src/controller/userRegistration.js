@@ -231,11 +231,28 @@ const updatePricingInfoInUserSchema = async (req, res) => {
 
     // Validate and update the subscription details
     if (req.body.date) {
-      const parsedDate = new Date(req.body.date);
-      if (isNaN(parsedDate.getTime())) {
+      const dateParts = req.body.date.split('-');
+      if (dateParts.length === 3) {
+        const day = parseInt(dateParts[0]);
+        const month = parseInt(dateParts[1]) - 1; // Months are zero-based (0-11)
+        const year = parseInt(dateParts[2]);
+
+        // Validate if the parsed date components are valid
+        if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+          const parsedDate = new Date(year, month, day);
+
+          // Check if the parsedDate is a valid date
+          if (!isNaN(parsedDate.getTime())) {
+            application.subscription.date = parsedDate;
+          } else {
+            return res.status(400).json({ message: 'Invalid date format' });
+          }
+        } else {
+          return res.status(400).json({ message: 'Invalid date format' });
+        }
+      } else {
         return res.status(400).json({ message: 'Invalid date format' });
       }
-      application.subscription.date = parsedDate;
     } else {
       application.subscription.date = new Date();
     }
