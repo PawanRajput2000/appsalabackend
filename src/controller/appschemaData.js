@@ -137,7 +137,7 @@ const productListByCategory = async (req, res) => {
 const savedProduct = async (req, res) => {
     try {
         const userId = req.decoded.userId;
-        const productId = req.body.productId;
+        const productId = req.params.applicationId;
 
         if (!productId) {
             return res.status(400).json({ status: false, data: 'Product ID not provided' });
