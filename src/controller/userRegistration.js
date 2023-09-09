@@ -1,4 +1,5 @@
 const userModel = require("../models/userModel")
+const Rating = require("../models/rating")
 const jwt = require("jsonwebtoken")
 
 
