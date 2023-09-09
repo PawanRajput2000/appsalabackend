@@ -176,7 +176,7 @@ const updateApplicationStatus = async (req, res) => {
     const applicationId = req.params.applicationId;
     const newStatus = req.body.status;
 
-    const user = await userModel.findById(userId);
+    const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
@@ -190,27 +190,48 @@ const updateApplicationStatus = async (req, res) => {
     // Check if the application is not found in "following_app"
     if (!application) {
       // If not found, check if it's in "saved"
-      const savedApplication = user.saved.find((app) =>
+      const savedApplicationIndex = user.saved.findIndex((app) =>
         app.equals(applicationId)
       );
 
-      if (!savedApplication) {
+      if (savedApplicationIndex === -1) {
         return res.status(404).json({ success: false, message: "Application not found" });
       }
 
-      // Add the application to "following_app" with the new status
+      // Remove the application from "saved"
+      user.saved.splice(savedApplicationIndex, 1);
+
+      // Create a new rating object with default values
+      const newRating = new Rating({
+        userId: userId,
+        applicationId: applicationId,
+        rating: {
+          Usability: 0,
+          Performance: 0,
+          Features: 0,
+          Support: 0,
+          Value: 0,
+          Company: 0,
+        },
+      });
+
+      // Save the new rating object
+      await newRating.save();
+
+      // Add the application to "following_app" with the new status and add the rating object ID to user_ratings
       user.following_app.push({
         obj_id: applicationId,
         status: newStatus,
         subscription: {
           date: Date.now(),
-          amount: 0, // You can set this as needed
-          duration: "trying", // You can set this as needed
-          package: "trying", // You can set this as needed
+          amount: 0,
+          duration: "trying",
+          package: "trying",
         },
+        user_ratings: [newRating._id], // Add the new rating object ID to user_ratings
       });
 
-      // Save the user with the updated "following_app"
+      // Save the user with the updated "following_app" and removed "saved" entry
       await user.save();
 
       return res.json({
