@@ -174,7 +174,7 @@ const updateApplicationStatus = async (req, res) => {
     // Find the user by their ID
     const userId = req.decoded.userId;
     const applicationId = req.params.applicationId;
-    const newStatus = req.body.status; // Use req.body.status
+    const newStatus = req.body.status;
 
     const user = await userModel.findById(userId);
 
@@ -187,13 +187,39 @@ const updateApplicationStatus = async (req, res) => {
       app.obj_id.equals(applicationId)
     );
 
+    // Check if the application is not found in "following_app"
     if (!application) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Application not found" });
+      // If not found, check if it's in "saved"
+      const savedApplication = user.saved.find((app) =>
+        app.equals(applicationId)
+      );
+
+      if (!savedApplication) {
+        return res.status(404).json({ success: false, message: "Application not found" });
+      }
+
+      // Add the application to "following_app" with the new status
+      user.following_app.push({
+        obj_id: applicationId,
+        status: newStatus,
+        subscription: {
+          date: Date.now(),
+          amount: 0, // You can set this as needed
+          duration: "trying", // You can set this as needed
+          package: "trying", // You can set this as needed
+        },
+      });
+
+      // Save the user with the updated "following_app"
+      await user.save();
+
+      return res.json({
+        success: true,
+        message: "Application status updated successfully",
+      });
     }
 
-    // Update the status of the application
+    // If the application is found in "following_app," update its status
     application.status = newStatus;
 
     // Save the user with the updated application status
