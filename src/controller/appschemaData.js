@@ -1,6 +1,7 @@
 const appSchema = require("../models/appschema")
 const { uploadFile } = require("../AWS/aws");
 const userModel = require("../models/userModel");
+const CategorySchema = require("../models/category")
 
 const createProduct = async (req, res) => {
     try {
@@ -118,12 +119,13 @@ const productListByCategory = async (req, res) => {
         let category = req.params.categoryname
 
         let data = await appSchema.find({ "Category": { $in: category } })
+        let categoryData = await CategorySchema.findOne({"slug":category})
 
         if (data.length === 0) {
             return res.status(404).send({ status: false, data: "not found" })
         }
 
-        return res.status(200).send({ status: true, data: data })
+        return res.status(200).send({ status: true, data: data , category :categoryData})
 
     } catch (err) {
         return res.status(500).send({ status: false, data: err.message })
