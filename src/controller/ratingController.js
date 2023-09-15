@@ -15,12 +15,6 @@ const createRating = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Check if the application is in the user's saved array
-    const savedAppIndex = user.saved.indexOf(applicationId);
-    if (savedAppIndex !== -1) {
-      // Remove the application from the saved array
-      user.saved.splice(savedAppIndex, 1);
-    }
 
     // Save the user with updated saved array
     await user.save();
@@ -78,6 +72,5 @@ const createRating = async (req, res) => {
   }
 };
 
-  
-  module.exports = { createRating };
-  
+
+module.exports = { createRating };

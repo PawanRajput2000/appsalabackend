@@ -37,12 +37,7 @@ const createComment = async (req, res) => {
       return res.status(404).json({ status: true, data: "User not found" });
     }
 
-    // Check if the application is in the user's saved array
-    const savedAppIndex = user.saved.indexOf(applicationId);
-    if (savedAppIndex !== -1) {
-      // Remove the application from the saved array
-      user.saved.splice(savedAppIndex, 1);
-    }
+   
 
     // Find the specific application within the user's following_app array
     let followingApp = user.following_app.find(app => app.obj_id.toString() === applicationId);

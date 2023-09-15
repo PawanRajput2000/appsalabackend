@@ -184,24 +184,11 @@ const updateApplicationStatus = async (req, res) => {
     }
 
     // Find the application within the "following_app" array by its ID
-    const application = user.following_app.find((app) =>
+    let application = user.following_app.find((app) =>
       app.obj_id.equals(applicationId)
     );
 
-    // Check if the application is not found in "following_app"
     if (!application) {
-      // If not found, check if it's in "saved"
-      const savedApplicationIndex = user.saved.findIndex((app) =>
-        app.equals(applicationId)
-      );
-
-      if (savedApplicationIndex === -1) {
-        return res.status(404).json({ success: false, message: "Application not found" });
-      }
-
-      // Remove the application from "saved"
-      user.saved.splice(savedApplicationIndex, 1);
-
       // Create a new rating object with default values
       const newRating = new Rating({
         userId: userId,
@@ -219,8 +206,8 @@ const updateApplicationStatus = async (req, res) => {
       // Save the new rating object
       await newRating.save();
 
-      // Add the application to "following_app" with the new status and add the rating object ID to user_ratings
-      user.following_app.push({
+      // Create a new following_app entry with the new status and add the rating object ID to user_ratings
+      application = {
         obj_id: applicationId,
         status: newStatus,
         subscription: {
@@ -230,21 +217,16 @@ const updateApplicationStatus = async (req, res) => {
           package: "trying",
         },
         user_ratings: [newRating._id], // Add the new rating object ID to user_ratings
-      });
+      };
 
-      // Save the user with the updated "following_app" and removed "saved" entry
-      await user.save();
-
-      return res.json({
-        success: true,
-        message: "Application status updated successfully",
-      });
+      // Add the application to "following_app"
+      user.following_app.push(application);
+    } else {
+      // If the application is found in "following_app," update its status
+      application.status = newStatus;
     }
 
-    // If the application is found in "following_app," update its status
-    application.status = newStatus;
-
-    // Save the user with the updated application status
+    // Save the user with the updated "following_app"
     await user.save();
 
     return res.json({
@@ -255,6 +237,7 @@ const updateApplicationStatus = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
 
 
 const updatePricingInfoInUserSchema = async (req, res) => {
