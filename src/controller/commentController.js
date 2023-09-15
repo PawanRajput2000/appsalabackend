@@ -11,15 +11,13 @@ const createComment = async (req, res) => {
     const userId = req.decoded.userId;
     const applicationId = req.params.applicationId;
     const commentText = req.body.comment;
-    console.log(userId)
-     console.log("done phase 1")
 
     if (!applicationId) {
-      return res.status(400).json({ status:true ,data: "applicationId required" });
+      return res.status(400).json({ status: true, data: "applicationId required" });
     }
 
     if (!commentText) {
-      return res.status(400).json({ status:true ,data: "Comment text required" });
+      return res.status(400).json({ status: true, data: "Comment text required" });
     }
 
     // Construct the comment data
@@ -31,14 +29,12 @@ const createComment = async (req, res) => {
 
     // Save the new comment to the database
     const savedComment = await Comment.create(commentData);
-    
-    
-    console.log("done phase 2")
+
     // Find the user and update the correct nested comments array
     const user = await User.findById(userId);
 
     if (!user) {
-      return res.status(404).json({ status:true ,data: "User not found" });
+      return res.status(404).json({ status: true, data: "User not found" });
     }
 
     // Check if the application is in the user's saved array
@@ -47,11 +43,6 @@ const createComment = async (req, res) => {
       // Remove the application from the saved array
       user.saved.splice(savedAppIndex, 1);
     }
-
-    // ... (rest of your code for updating user's following_app array)
-
-    // Save the user with updated saved and following_app arrays
-    await user.save();
 
     // Find the specific application within the user's following_app array
     let followingApp = user.following_app.find(app => app.obj_id.toString() === applicationId);
@@ -65,6 +56,12 @@ const createComment = async (req, res) => {
           comment: [savedComment._id]
         }
       };
+
+      // Check if duration is not provided, and if so, set it to "0"
+      if (!followingApp.subscription.duration) {
+        followingApp.subscription.duration = "0";
+      }
+
       user.following_app.push(followingApp);
     } else {
       // Ensure necessary structures are initialized
@@ -79,13 +76,12 @@ const createComment = async (req, res) => {
       // Add the comment to the subscription array
       followingApp.subscription.comment.push(savedComment._id);
     }
-    
+
     // Save the user with updated subscription and comment arrays
     await user.save();
-    
 
-    // here i am sending comment to frontend because that will reflect on latest comment lists 
-    res.json({ status :true ,message: "Comment added successfully.", comment:commentText  });
+    // Send the comment to the frontend because it will reflect in the latest comment lists
+    res.json({ status: true, message: "Comment added successfully.", comment: commentText });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ error: "Internal server error" });
