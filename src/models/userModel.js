@@ -34,7 +34,7 @@ const user = new mongoose.Schema({
             status: {
                 type: String,
                 enum: ["I am using it 👍","Yes, i want to 🤩", "No, i don't 😑", "Maybe 🤔"],
-                default: 'No'
+                default: 'Maybe 🤔'
 
             }, 
             subscription: {

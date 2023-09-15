@@ -48,7 +48,7 @@ const createRating = async (req, res) => {
       // If not following, create a new following_app entry
       followingApp = {
         obj_id: app._id,
-        status: "No", // Default status
+        status: "", // Default status
         subscription: {
           date: Date.now(),
           amount: 0,
