@@ -1,5 +1,6 @@
 const rating = require("../models/rating");
 const User = require("../models/userModel")
+const App = require("../models/appschema")
 
 const createRating = async (req, res) => {
   try {
@@ -32,7 +33,7 @@ const createRating = async (req, res) => {
     }
 
     // Create or update the rating
-    const existingRating = await Rating.findOneAndUpdate(
+    const existingRating = await rating.findOneAndUpdate(
       { userId: userId, applicationId: applicationId },
       { $set: { rating: ratingValue } },
       { new: true, upsert: true }
