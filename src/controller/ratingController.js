@@ -1,4 +1,4 @@
-const rating = require("../models/rating");
+const Rating = require("../models/rating");
 const User = require("../models/userModel")
 const App = require("../models/appschema")
 
@@ -15,10 +15,6 @@ const createRating = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-
-    // Save the user with updated saved array
-    await user.save();
-
     // Find the specific application
     const app = await App.findById(applicationId);
 
@@ -27,10 +23,15 @@ const createRating = async (req, res) => {
     }
 
     // Create or update the rating
-    const existingRating = await rating.findOneAndUpdate(
+    const existingRating = await Rating.findOneAndUpdate(
       { userId: userId, applicationId: applicationId },
       { $set: { rating: ratingValue } },
       { new: true, upsert: true }
+    );
+
+    // Check if the user has the application in saved
+    let savedApp = user.saved.find(
+      (app) => app.obj_id.toString() === applicationId
     );
 
     // Check if the user is following the application
@@ -38,31 +39,46 @@ const createRating = async (req, res) => {
       (app) => app.obj_id.toString() === applicationId
     );
 
-    if (!followingApp) {
-      // If not following, create a new following_app entry
-      followingApp = {
-        obj_id: app._id,
-        status: "Maybe 🤔", // Default status
-        subscription: {
-          date: Date.now(),
-          amount: 0,
-          duration: "unknown", // You can set a default value
-          package: "trying", // Default package
-          comment: [], // Empty comment array
-          user_ratings: [existingRating._id], // Include the rating
-        },
-      };
-
-      // Add to following_app array
-      user.following_app.push(followingApp);
+    // If the app is in both saved and following_app, update both
+    if (savedApp && followingApp) {
+      savedApp.subscription.user_ratings.push(existingRating._id);
+      followingApp.subscription.user_ratings.push(existingRating._id);
     } else {
-      // If already following, update the user_ratings array
-      if (!followingApp.subscription.user_ratings.includes(existingRating._id)) {
+      // If not in both, update them individually
+      if (savedApp) {
+        savedApp.subscription.user_ratings.push(existingRating._id);
+      } else {
+        // If not in saved, create a new saved entry
+        savedApp = {
+          obj_id: app._id,
+          status: "Maybe 🤔", // Default status
+          comment: [],
+          user_ratings: [existingRating._id],
+        };
+        user.saved.push(savedApp);
+      }
+
+      if (followingApp) {
         followingApp.subscription.user_ratings.push(existingRating._id);
+      } else {
+        // If not in following_app, create a new following_app entry
+        followingApp = {
+          obj_id: app._id,
+          status: "Maybe 🤔", // Default status
+          subscription: {
+            date: Date.now(),
+            amount: 0,
+            duration: "unknown", // You can set a default value
+            package: "trying", // Default package
+            comment: [], // Empty comment array
+            user_ratings: [existingRating._id], // Include the rating
+          },
+        };
+        user.following_app.push(followingApp);
       }
     }
 
-    // Save the user with updated following_app array
+    // Save the user with updated saved and following_app arrays
     await user.save();
 
     res.status(200).send({ status: true, data: "Rating added/updated successfully." });
@@ -71,6 +87,7 @@ const createRating = async (req, res) => {
     res.status(500).send({ status: false, data: err.message });
   }
 };
+
 
 
 module.exports = { createRating };

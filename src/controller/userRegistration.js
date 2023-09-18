@@ -176,7 +176,6 @@ const updateApplicationStatus = async (req, res) => {
     const userId = req.decoded.userId;
     const applicationId = req.params.applicationId;
     const newStatus = req.body.status;
-    console.log(newStatus)
 
     const user = await userModel.findById(userId);
 
@@ -189,7 +188,12 @@ const updateApplicationStatus = async (req, res) => {
       app.obj_id.equals(applicationId)
     );
 
-    if (!application) {
+    // Find the application within the "saved" array by its ID
+    let savedApplication = user.saved.find((app) =>
+      app.obj_id.equals(applicationId)
+    );
+
+    if (!application && !savedApplication) {
       // Create a new rating object with default values
       const newRating = new Rating({
         userId: userId,
@@ -222,12 +226,30 @@ const updateApplicationStatus = async (req, res) => {
 
       // Add the application to "following_app"
       user.following_app.push(application);
+
+      // Create a new saved entry with the new status and add the rating object ID to user_ratings
+      savedApplication = {
+        obj_id: applicationId,
+        status: newStatus,
+        comment: [], // You can customize this as needed
+        user_ratings: [newRating._id], // Add the new rating object ID to user_ratings
+      };
+
+      // Add the application to "saved"
+      user.saved.push(savedApplication);
     } else {
       // If the application is found in "following_app," update its status
-      application.status = newStatus;
+      if (application) {
+        application.status = newStatus;
+      }
+
+      // If the application is found in "saved," update its status
+      if (savedApplication) {
+        savedApplication.status = newStatus;
+      }
     }
 
-    // Save the user with the updated "following_app"
+    // Save the user with the updated "following_app" and "saved"
     await user.save();
 
     return res.json({
@@ -238,6 +260,7 @@ const updateApplicationStatus = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
 
 
 

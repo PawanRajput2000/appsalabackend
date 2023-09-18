@@ -13,11 +13,11 @@ const createComment = async (req, res) => {
     const commentText = req.body.comment;
 
     if (!applicationId) {
-      return res.status(400).json({ status: true, data: "applicationId required" });
+      return res.status(400).json({ status: false, data: "applicationId required" });
     }
 
     if (!commentText) {
-      return res.status(400).json({ status: true, data: "Comment text required" });
+      return res.status(400).json({ status: false, data: "Comment text required" });
     }
 
     // Construct the comment data
@@ -30,14 +30,15 @@ const createComment = async (req, res) => {
     // Save the new comment to the database
     const savedComment = await Comment.create(commentData);
 
-    // Find the user and update the correct nested comments array
+    // Find the user
     const user = await User.findById(userId);
 
     if (!user) {
-      return res.status(404).json({ status: true, data: "User not found" });
+      return res.status(404).json({ status: false, data: "User not found" });
     }
 
-   
+    // Find the specific application within the user's saved array
+    let savedApp = user.saved.find(app => app.obj_id.toString() === applicationId);
 
     // Find the specific application within the user's following_app array
     let followingApp = user.following_app.find(app => app.obj_id.toString() === applicationId);
@@ -72,16 +73,32 @@ const createComment = async (req, res) => {
       followingApp.subscription.comment.push(savedComment._id);
     }
 
-    // Save the user with updated subscription and comment arrays
+    // If the user has the application in saved, update it
+    if (savedApp) {
+      savedApp.subscription.comment.push(savedComment._id);
+    } else {
+      // If not in saved, create a new saved entry
+      savedApp = {
+        obj_id: applicationId,
+        status: "Maybe 🤔",
+        subscription: {
+          comment: [savedComment._id]
+        }
+      };
+      user.saved.push(savedApp);
+    }
+
+    // Save the user with updated saved and following_app arrays
     await user.save();
 
     // Send the comment to the frontend because it will reflect in the latest comment lists
     res.json({ status: true, message: "Comment added successfully.", comment: commentText });
   } catch (error) {
     console.error(error.message);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ status: false, error: "Internal server error" });
   }
 };
+
 
 
 
