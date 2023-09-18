@@ -94,5 +94,5 @@ const userSchema = new mongoose.Schema({
     get: time => time.toDateString(),
   });
   
-  module.exports = mongoose.model("User", userSchema);
+  module.exports = mongoose.model("user", userSchema);
   
