@@ -6,6 +6,7 @@ const ObjectId = mongoose.Types.ObjectId;
 const authentication = async (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;
+        console.log(authHeader)
         
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
             return res.status(401).json({ status: false, data: "Token must be provided" });
