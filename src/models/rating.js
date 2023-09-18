@@ -13,12 +13,30 @@ const ratingScehma = new mongoose.Schema({
     required: true
   },
   rating: {
-      Usability: Number,
-      Performance: Number,
-      Features: Number,
-      Support: Number,
-      Value: Number,
-      Company: Number,
+    Usability: {
+      type: Number,
+      default: 0
+    },
+    Performance: {
+      type: Number,
+      default: 0
+    },
+    Features: {
+      type: Number,
+      default: 0
+    },
+    Support: {
+      type: Number,
+      default: 0
+    },
+    Value: {
+      type: Number,
+      default: 0
+    },
+    Company: {
+      type: Number,
+      default: 0
+    }
   }
 }, {
   timestamps: true,
