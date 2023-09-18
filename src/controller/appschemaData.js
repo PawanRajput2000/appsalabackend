@@ -166,7 +166,7 @@ const savedProduct = async (req, res) => {
       return res.status(200).json({ status: true, data: 'Product saved successfully' });
     } catch (err) {
       console.error(err.message);
-      return res.status(500).json({ status: false, data: 'Internal server error' });
+      return res.status(500).json({ status: false, data: err.message });
     }
   };
   
