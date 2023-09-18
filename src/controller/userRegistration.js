@@ -118,12 +118,20 @@ const getProfileDetails = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
+    // Check if following_app exists and has an obj_id before using toString
+    userWithDetails.following_app.forEach((app) => {
+      if (app.obj_id) {
+        app.obj_id = app.obj_id.toString();
+      }
+    });
+
     res.json({ status: true, data: userWithDetails });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
 
 
