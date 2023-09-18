@@ -138,36 +138,38 @@ const productListByCategory = async (req, res) => {
 
 const savedProduct = async (req, res) => {
     try {
-        const userId = req.decoded.userId;
-        const productId = req.params.applicationId;
-
-        if (!productId) {
-            return res.status(400).json({ status: false, data: 'Product ID not provided' });
-        }
-
-        let user = await userModel.findById(userId);
-
-        if (!user) {
-            return res.status(404).json({ status: false, data: 'User not found' });
-        }
-
-        // Check if the productId already exists in the user's saved array
-        if (user.saved.includes(productId)) {
-            return res.status(400).json({ status: false, data: 'Product already saved' });
-        }
-
-        // Push the productId into the user's saved array
-        user.saved.push(productId);
-
-        await user.save();
-
-        return res.status(200).json({ status: true, data: 'Product saved successfully' });
+      const userId = req.decoded.userId;
+      const productId = req.params.applicationId;
+  
+      if (!productId) {
+        return res.status(400).json({ status: false, data: 'Product ID not provided' });
+      }
+  
+      let user = await userModel.findById(userId);
+  
+      if (!user) {
+        return res.status(404).json({ status: false, data: 'User not found' });
+      }
+  
+      // Check if the productId already exists in the user's saved array
+      const productExists = user.saved.some(savedProduct => savedProduct.toString() === productId);
+  
+      if (productExists) {
+        return res.status(400).json({ status: false, data: 'Product already saved' });
+      }
+  
+      // Push the productId into the user's saved array
+      user.saved.push(productId);
+  
+      await user.save();
+  
+      return res.status(200).json({ status: true, data: 'Product saved successfully' });
     } catch (err) {
-        console.error(err);
-        return res.status(500).json({ status: false, data: 'Internal server error' });
+      console.error(err.message);
+      return res.status(500).json({ status: false, data: 'Internal server error' });
     }
-};
-
+  };
+  
 const deleteFromSaved = async (req, res) => {
     try {
         const userId = req.decoded.userId;
