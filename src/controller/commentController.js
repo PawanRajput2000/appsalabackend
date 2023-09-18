@@ -95,7 +95,7 @@ const createComment = async (req, res) => {
     res.json({ status: true, message: "Comment added successfully.", comment: commentText });
   } catch (error) {
     console.error(error.message);
-    res.status(500).json({ status: false, error: "Internal server error" });
+    res.status(500).json({ status: false, data :error.message });
   }
 };
 
