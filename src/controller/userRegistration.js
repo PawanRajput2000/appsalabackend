@@ -176,6 +176,7 @@ const updateApplicationStatus = async (req, res) => {
     const userId = req.decoded.userId;
     const applicationId = req.params.applicationId;
     const newStatus = req.body.status;
+    console.log(newStatus)
 
     const user = await userModel.findById(userId);
 
