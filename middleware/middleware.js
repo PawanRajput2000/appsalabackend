@@ -12,15 +12,18 @@ const authentication = async (req, res, next) => {
         }
 
         const token = authHeader.split(" ")[1];
+        
 
         jwt.verify(token, "osnilWebSolution", function (err, decoded) {
+            console.log(token)
             if (err) {
+               
                 return res.status(401).send({ status: false, message: err.message });
             }          
             req.decoded = decoded;
             next();
         });
-    } catch (err) {
+    } catch (err) {      
         console.log(err.message)
         return res.status(500).json({ status: false, message: err.message });
     }
