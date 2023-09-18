@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
+const user = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -92,5 +92,5 @@ const userSchema = new mongoose.Schema({
   timestamps: true,
   toJSON: { getters: true } // This ensures the timestamps are returned as strings.
 });
+module.exports = mongoose.model("user", user)
 
-module.exports = mongoose.model("users", userSchema);
