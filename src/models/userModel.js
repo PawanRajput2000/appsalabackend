@@ -93,4 +93,4 @@ const userSchema = new mongoose.Schema({
   toJSON: { getters: true } // This ensures the timestamps are returned as strings.
 });
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("users", userSchema);
