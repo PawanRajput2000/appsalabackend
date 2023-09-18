@@ -93,7 +93,6 @@ const following_app = async (req, res) => {
 const getProfileDetails = async (req, res) => {
   try {
     const userId = req.params.userId;
-
     const userWithDetails = await userModel.findById(userId)
       .populate({
         path: "following_app.obj_id",
