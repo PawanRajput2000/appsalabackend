@@ -40,6 +40,7 @@ const createProduct = async (req, res) => {
 
         //uploading productImage file in AWS
         let uploadedFileURL = await uploadFile(files[0]);
+        console.log(uploadedFileURL)
         formData.logo = uploadedFileURL;
 
         //convert seller details section into object 
