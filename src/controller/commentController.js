@@ -94,7 +94,7 @@ const createComment = async (req, res) => {
     // Send the comment to the frontend because it will reflect in the latest comment lists
     res.json({ status: true, message: "Comment added successfully.", comment: commentText });
   } catch (error) {
-    console.message(error.message);
+    console.log(error.message);
     res.status(500).json({ status: false, data :error.message });
   }
 };
