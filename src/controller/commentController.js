@@ -26,7 +26,7 @@ const createComment = async (req, res) => {
       applicationId: applicationId,
       comment: commentText
     };
-
+   console.log(commentData)
     // Save the new comment to the database
     const savedComment = await Comment.create(commentData);
 
