@@ -51,7 +51,7 @@ const createRating = async (req, res) => {
         // If not in saved, create a new saved entry
         savedApp = {
           obj_id: app._id,
-          status: "Maybe 🤔", // Default status
+          status: "Maybe 🤔",
           comment: [],
           user_ratings: [existingRating._id],
         };
@@ -64,14 +64,14 @@ const createRating = async (req, res) => {
         // If not in following_app, create a new following_app entry
         followingApp = {
           obj_id: app._id,
-          status: "Maybe 🤔", // Default status
+          status: "Maybe 🤔",
           subscription: {
             date: Date.now(),
             amount: 0,
-            duration: "unknown", // You can set a default value
-            package: "trying", // Default package
-            comment: [], // Empty comment array
-            user_ratings: [existingRating._id], // Include the rating
+            duration: "unknown",
+            package: "trying",
+            comment: [],
+            user_ratings: [existingRating._id],
           },
         };
         user.following_app.push(followingApp);
@@ -88,6 +88,5 @@ const createRating = async (req, res) => {
   }
 };
 
-
-
 module.exports = { createRating };
+
