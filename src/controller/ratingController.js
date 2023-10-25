@@ -29,56 +29,32 @@ const createRating = async (req, res) => {
       { new: true, upsert: true }
     );
 
-    // Check if the user has the application in saved
-    let savedApp = user.saved.find(
-      (app) => app.obj_id.toString() === applicationId
-    );
-
     // Check if the user is following the application
     let followingApp = user.following_app.find(
       (app) => app.obj_id.toString() === applicationId
     );
 
-    // If the app is in both saved and following_app, update both
-    if (savedApp && followingApp) {
-      savedApp.subscription.user_ratings.push(existingRating._id);
+    // If following the app, update it
+    if (followingApp) {
       followingApp.subscription.user_ratings.push(existingRating._id);
     } else {
-      // If not in both, update them individually
-      if (savedApp) {
-        savedApp.subscription.user_ratings.push(existingRating._id);
-      } else {
-        // If not in saved, create a new saved entry
-        savedApp = {
-          obj_id: app._id,
-          status: "Maybe 🤔",
+      // If not in following_app, create a new following_app entry
+      followingApp = {
+        obj_id: app._id,
+        status: "Maybe 🤔",
+        subscription: {
+          date: Date.now(),
+          amount: 0,
+          duration: "unknown",
+          package: "trying",
           comment: [],
-          user_ratings: [existingRating._id],
-        };
-        user.saved.push(savedApp);
-      }
-
-      if (followingApp) {
-        followingApp.subscription.user_ratings.push(existingRating._id);
-      } else {
-        // If not in following_app, create a new following_app entry
-        followingApp = {
-          obj_id: app._id,
-          status: "Maybe 🤔",
-          subscription: {
-            date: Date.now(),
-            amount: 0,
-            duration: "unknown",
-            package: "trying",
-            comment: [],
-            user_ratings: [existingRating._id],
-          },
-        };
-        user.following_app.push(followingApp);
-      }
+          user_ratings: [existingRating._id]
+        }
+      };
+      user.following_app.push(followingApp);
     }
 
-    // Save the user with updated saved and following_app arrays
+    // Save the user with the updated "following_app" array
     await user.save();
 
     res.status(200).send({ status: true, data: "Rating added/updated successfully." });
