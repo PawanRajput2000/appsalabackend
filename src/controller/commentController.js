@@ -24,9 +24,9 @@ const createComment = async (req, res) => {
     const commentData = {
       userId: userId,
       applicationId: applicationId,
-      comment: commentText
+      comment: commentText,
     };
-   console.log(commentData)
+
     // Save the new comment to the database
     const savedComment = await Comment.create(commentData);
 
@@ -37,11 +37,10 @@ const createComment = async (req, res) => {
       return res.status(404).json({ status: false, data: "User not found" });
     }
 
-    // Find the specific application within the user's saved array
-    let savedApp = user.saved.find(app => app.obj_id.toString() === applicationId);
-
     // Find the specific application within the user's following_app array
-    let followingApp = user.following_app.find(app => app.obj_id.toString() === applicationId);
+    let followingApp = user.following_app.find(
+      (app) => app.obj_id.toString() === applicationId
+    );
 
     // If the user is not already following the application, follow it
     if (!followingApp) {
@@ -49,8 +48,8 @@ const createComment = async (req, res) => {
         obj_id: applicationId,
         status: "Maybe 🤔",
         subscription: {
-          comment: [savedComment._id]
-        }
+          comment: [savedComment._id],
+        },
       };
 
       // Check if duration is not provided, and if so, set it to "0"
@@ -73,31 +72,17 @@ const createComment = async (req, res) => {
       followingApp.subscription.comment.push(savedComment._id);
     }
 
-    // If the user has the application in saved, update it
-    if (savedApp) {
-      savedApp.subscription.comment.push(savedComment._id);
-    } else {
-      // If not in saved, create a new saved entry
-      savedApp = {
-        obj_id: applicationId,
-        status: "Maybe 🤔",
-        subscription: {
-          comment: [savedComment._id]
-        }
-      };
-      user.saved.push(savedApp);
-    }
-
-    // Save the user with updated saved and following_app arrays
+    // Save the user with updated following_app arrays, but do not add to "saved"
     await user.save();
 
     // Send the comment to the frontend because it will reflect in the latest comment lists
     res.json({ status: true, message: "Comment added successfully.", comment: commentText });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ status: false, data :error.message });
+    res.status(500).json({ status: false, data: error.message });
   }
 };
+
 
 
 
