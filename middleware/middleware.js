@@ -13,8 +13,11 @@ const authentication = async (req, res, next) => {
 
         const token = authHeader.split(" ")[1];
 
+        console.log("Received Token:", token); // Log the received token for inspection
+
         jwt.verify(token, "osnilWebSolution", (err, decoded) => {
             if (err) {
+                console.error("JWT Verification Error:", err); // Log the JWT verification error
                 return res.status(401).json({ status: false, message: "JWT verification failed", error: err.message });
             }
 
@@ -26,6 +29,7 @@ const authentication = async (req, res, next) => {
         return res.status(500).json({ status: false, message: "Internal Server Error", error: err.message });
     }
 };
+
 
 
 const authorisation = async (req, res, next) => {
