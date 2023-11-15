@@ -20,6 +20,13 @@ const createComment = async (req, res) => {
       return res.status(400).json({ status: false, data: "Comment text required" });
     }
 
+    // Find the user
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ status: false, data: "User not found" });
+    }
+
     // Check if the user has the application in the "saved" array
     const isApplicationSaved = user.saved.some(app => app.obj_id.toString() === applicationId);
 
@@ -37,13 +44,6 @@ const createComment = async (req, res) => {
 
     // Save the new comment to the database
     const savedComment = await Comment.create(commentData);
-
-    // Find the user
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(404).json({ status: false, data: "User not found" });
-    }
 
     // Find the specific application within the user's following_app array
     let followingApp = user.following_app.find(
@@ -90,6 +90,8 @@ const createComment = async (req, res) => {
     res.status(500).json({ status: false, data: error.message });
   }
 };
+
+
 
 
 
