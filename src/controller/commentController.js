@@ -8,10 +8,12 @@ const User = require("../models/userModel")
 
 const createComment = async (req, res) => {
   try {
+    // Extract information from the request
     const userId = req.decoded.userId;
     const applicationId = req.params.applicationId;
     const commentText = req.body.comment;
 
+    // Input validation
     if (!applicationId) {
       return res.status(400).json({ status: false, data: "applicationId required" });
     }
@@ -37,42 +39,52 @@ const createComment = async (req, res) => {
       return res.status(404).json({ status: false, data: "User not found" });
     }
 
-    // Find the specific application within the user's following_app array
-    let followingApp = user.following_app.find(
+    // Find the specific application within the user's saved array
+    let savedApp = user.saved.find(
       (app) => app.obj_id.toString() === applicationId
     );
 
-    // If the user is not already following the application, follow it
-    if (!followingApp) {
-      followingApp = {
-        obj_id: applicationId,
-        status: "Maybe 🤔",
-        subscription: {
-          comment: [savedComment._id],
-        },
-      };
-
-      // Check if duration is not provided, and if so, set it to "0"
-      if (!followingApp.subscription.duration) {
-        followingApp.subscription.duration = "0";
-      }
-
-      user.following_app.push(followingApp);
+    // If the user has the application in the saved array, add the comment there
+    if (savedApp) {
+      savedApp.comment.push(savedComment._id);
     } else {
-      // Ensure necessary structures are initialized
-      if (!followingApp.subscription) {
-        followingApp.subscription = {};
-      }
+      // If the application is not saved, consider adding it to "following_app" (if needed)
+      let followingApp = user.following_app.find(
+        (app) => app.obj_id.toString() === applicationId
+      );
 
-      if (!followingApp.subscription.comment) {
-        followingApp.subscription.comment = [];
-      }
+      // If the user is not already following the application, follow it
+      if (!followingApp) {
+        followingApp = {
+          obj_id: applicationId,
+          status: "Maybe 🤔",
+          subscription: {
+            comment: [savedComment._id],
+          },
+        };
 
-      // Add the comment to the subscription array
-      followingApp.subscription.comment.push(savedComment._id);
+        // Check if duration is not provided, and if so, set it to "0"
+        if (!followingApp.subscription.duration) {
+          followingApp.subscription.duration = "0";
+        }
+
+        user.following_app.push(followingApp);
+      } else {
+        // Ensure necessary structures are initialized
+        if (!followingApp.subscription) {
+          followingApp.subscription = {};
+        }
+
+        if (!followingApp.subscription.comment) {
+          followingApp.subscription.comment = [];
+        }
+
+        // Add the comment to the subscription array
+        followingApp.subscription.comment.push(savedComment._id);
+      }
     }
 
-    // Save the user with updated following_app arrays, but do not add to "saved"
+    // Save the user with updated "following_app" and "saved" arrays
     await user.save();
 
     // Send the comment to the frontend because it will reflect in the latest comment lists
@@ -82,6 +94,9 @@ const createComment = async (req, res) => {
     res.status(500).json({ status: false, data: error.message });
   }
 };
+
+
+
 
 
 

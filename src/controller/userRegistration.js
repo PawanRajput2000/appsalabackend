@@ -179,13 +179,15 @@ const updateUser = async (req, res) => {
 
 const updateApplicationStatus = async (req, res) => {
   try {
-    // Find the user by their ID
+    // Extract information from the request
     const userId = req.decoded.userId;
     const applicationId = req.params.applicationId;
     const newStatus = req.body.status;
 
+    // Find the user by their ID
     const user = await userModel.findById(userId);
 
+    // If user not found, return 404
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
@@ -200,8 +202,8 @@ const updateApplicationStatus = async (req, res) => {
       app.obj_id.equals(applicationId)
     );
 
+    // If the application is not found in either array, create a new Rating object
     if (!application && !savedApplication) {
-      // Create a new rating object with default values
       const newRating = new Rating({
         userId: userId,
         applicationId: applicationId,
@@ -228,7 +230,7 @@ const updateApplicationStatus = async (req, res) => {
           duration: "trying",
           package: "trying",
         },
-        user_ratings: [newRating._id], // Add the new rating object ID to user_ratings
+        user_ratings: [newRating._id],
       };
 
       // Add the application to "following_app"
@@ -238,8 +240,8 @@ const updateApplicationStatus = async (req, res) => {
       savedApplication = {
         obj_id: applicationId,
         status: newStatus,
-        comment: [], // You can customize this as needed
-        user_ratings: [newRating._id], // Add the new rating object ID to user_ratings
+        comment: [],
+        user_ratings: [newRating._id],
       };
 
       // Add the application to "saved"
@@ -267,6 +269,10 @@ const updateApplicationStatus = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
+
+
 
 
 
