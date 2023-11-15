@@ -275,8 +275,6 @@ const updateApplicationStatus = async (req, res) => {
 
 
 
-
-
 const updatePricingInfoInUserSchema = async (req, res) => {
   try {
     const userId = req.decoded.userId;

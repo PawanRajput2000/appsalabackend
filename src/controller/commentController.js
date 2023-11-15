@@ -39,52 +39,42 @@ const createComment = async (req, res) => {
       return res.status(404).json({ status: false, data: "User not found" });
     }
 
-    // Find the specific application within the user's saved array
-    let savedApp = user.saved.find(
+    // Find the specific application within the user's following_app array
+    let followingApp = user.following_app.find(
       (app) => app.obj_id.toString() === applicationId
     );
 
-    // If the user has the application in the saved array, add the comment there
-    if (savedApp) {
-      savedApp.comment.push(savedComment._id);
-    } else {
-      // If the application is not saved, consider adding it to "following_app" (if needed)
-      let followingApp = user.following_app.find(
-        (app) => app.obj_id.toString() === applicationId
-      );
+    // If the user is not already following the application, follow it
+    if (!followingApp) {
+      followingApp = {
+        obj_id: applicationId,
+        status: "Maybe 🤔",
+        subscription: {
+          comment: [savedComment._id],
+        },
+      };
 
-      // If the user is not already following the application, follow it
-      if (!followingApp) {
-        followingApp = {
-          obj_id: applicationId,
-          status: "Maybe 🤔",
-          subscription: {
-            comment: [savedComment._id],
-          },
-        };
-
-        // Check if duration is not provided, and if so, set it to "0"
-        if (!followingApp.subscription.duration) {
-          followingApp.subscription.duration = "0";
-        }
-
-        user.following_app.push(followingApp);
-      } else {
-        // Ensure necessary structures are initialized
-        if (!followingApp.subscription) {
-          followingApp.subscription = {};
-        }
-
-        if (!followingApp.subscription.comment) {
-          followingApp.subscription.comment = [];
-        }
-
-        // Add the comment to the subscription array
-        followingApp.subscription.comment.push(savedComment._id);
+      // Check if duration is not provided, and if so, set it to "0"
+      if (!followingApp.subscription.duration) {
+        followingApp.subscription.duration = "0";
       }
+
+      user.following_app.push(followingApp);
+    } else {
+      // Ensure necessary structures are initialized
+      if (!followingApp.subscription) {
+        followingApp.subscription = {};
+      }
+
+      if (!followingApp.subscription.comment) {
+        followingApp.subscription.comment = [];
+      }
+
+      // Add the comment to the subscription array
+      followingApp.subscription.comment.push(savedComment._id);
     }
 
-    // Save the user with updated "following_app" and "saved" arrays
+    // Save the user with updated following_app arrays, but do not add to "saved"
     await user.save();
 
     // Send the comment to the frontend because it will reflect in the latest comment lists

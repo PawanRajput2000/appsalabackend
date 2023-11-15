@@ -29,16 +29,6 @@ const createRating = async (req, res) => {
       { new: true, upsert: true }
     );
 
-    // Check if the user has the application in the saved array
-    let savedApp = user.saved.find(
-      (app) => app.obj_id.toString() === applicationId
-    );
-
-    // If the user has the application in the saved array, add the rating there
-    if (savedApp) {
-      savedApp.user_ratings.push(existingRating._id);
-    }
-
     // Check if the user is following the application
     let followingApp = user.following_app.find(
       (app) => app.obj_id.toString() === applicationId
@@ -64,7 +54,7 @@ const createRating = async (req, res) => {
       user.following_app.push(followingApp);
     }
 
-    // Save the user with the updated "following_app" and "saved" arrays
+    // Save the user with the updated "following_app" array
     await user.save();
 
     res.status(200).send({ status: true, data: "Rating added/updated successfully." });
@@ -73,7 +63,6 @@ const createRating = async (req, res) => {
     res.status(500).send({ status: false, data: err.message });
   }
 };
-
 
 
 module.exports = { createRating };
