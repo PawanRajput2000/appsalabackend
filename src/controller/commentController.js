@@ -20,6 +20,14 @@ const createComment = async (req, res) => {
       return res.status(400).json({ status: false, data: "Comment text required" });
     }
 
+    // Check if the user has the application in the "saved" array
+    const isApplicationSaved = user.saved.some(app => app.obj_id.toString() === applicationId);
+
+    // If the application is saved, do not follow it
+    if (isApplicationSaved) {
+      return res.status(400).json({ status: false, data: "Application is already saved." });
+    }
+
     // Construct the comment data
     const commentData = {
       userId: userId,
@@ -82,6 +90,7 @@ const createComment = async (req, res) => {
     res.status(500).json({ status: false, data: error.message });
   }
 };
+
 
 
 
