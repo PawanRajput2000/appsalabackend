@@ -7,28 +7,26 @@ const authentication = async (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;
 
-
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
             return res.status(401).json({ status: false, data: "Token must be provided" });
         }
 
         const token = authHeader.split(" ")[1];
 
-
-        jwt.verify(token, "osnilWebSolution", function (err, decoded) {
-
+        jwt.verify(token, "osnilWebSolution", (err, decoded) => {
             if (err) {
-
-                return res.status(401).send({ status: false, message: err.message });
+                return res.status(401).json({ status: false, message: "JWT verification failed", error: err.message });
             }
+
             req.decoded = decoded;
             next();
         });
     } catch (err) {
-        console.log(err.message)
-        return res.status(500).json({ status: false, message: err.message });
+        console.error(err.message);
+        return res.status(500).json({ status: false, message: "Internal Server Error", error: err.message });
     }
 };
+
 
 const authorisation = async (req, res, next) => {
     try {

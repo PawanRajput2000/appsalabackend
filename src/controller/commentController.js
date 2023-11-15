@@ -8,12 +8,10 @@ const User = require("../models/userModel")
 
 const createComment = async (req, res) => {
   try {
-    // Extract information from the request
     const userId = req.decoded.userId;
     const applicationId = req.params.applicationId;
     const commentText = req.body.comment;
 
-    // Input validation
     if (!applicationId) {
       return res.status(400).json({ status: false, data: "applicationId required" });
     }
@@ -84,9 +82,6 @@ const createComment = async (req, res) => {
     res.status(500).json({ status: false, data: error.message });
   }
 };
-
-
-
 
 
 

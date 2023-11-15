@@ -48,8 +48,8 @@ const createRating = async (req, res) => {
           duration: "unknown",
           package: "trying",
           comment: [],
-          user_ratings: [existingRating._id],
-        },
+          user_ratings: [existingRating._id]
+        }
       };
       user.following_app.push(followingApp);
     }
@@ -63,7 +63,6 @@ const createRating = async (req, res) => {
     res.status(500).send({ status: false, data: err.message });
   }
 };
-
 
 module.exports = { createRating };
 
