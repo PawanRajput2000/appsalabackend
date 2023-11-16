@@ -27,12 +27,18 @@ const createComment = async (req, res) => {
       return res.status(404).json({ status: false, data: "User not found" });
     }
 
-    // Check if the user has the application in the "saved" array
+    // Check if the application is saved
     const isApplicationSaved = user.saved.some(app => app.obj_id.toString() === applicationId);
 
-    // If the application is saved, do not follow it
     if (isApplicationSaved) {
       return res.status(400).json({ status: false, data: "Application is already saved." });
+    }
+
+    // Check if the application is already followed
+    const isApplicationFollowed = user.following_app.some(app => app.obj_id.toString() === applicationId);
+
+    if (isApplicationFollowed) {
+      return res.status(400).json({ status: false, data: "Application is already followed." });
     }
 
     // Construct the comment data
@@ -90,6 +96,7 @@ const createComment = async (req, res) => {
     res.status(500).json({ status: false, data: error.message });
   }
 };
+
 
 
 
