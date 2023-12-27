@@ -93,7 +93,7 @@ const createComment = async (req, res) => {
     res.json({ status: true, message: "Comment added successfully.", comment: commentText });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ status: false, data: error.message });
+    res.status(500).json({ status: false, data: error.message ,msg:"error"});
   }
 };
 
