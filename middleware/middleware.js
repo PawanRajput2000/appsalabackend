@@ -5,6 +5,7 @@ const ObjectId = mongoose.Types.ObjectId;
 
 const authentication = async (req, res, next) => {
     try {
+        console.log("done")
         const authHeader = req.headers.authorization;
 
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -30,6 +31,7 @@ const authentication = async (req, res, next) => {
 
 const authorisation = async (req, res, next) => {
     try {
+        console.log("done1 ")
         let userId = req.params.userId;
         if (userId === ":userId") {
             return res.status(400).send({ status: false, data: "userId required" });

@@ -11,8 +11,7 @@ const createComment = async (req, res) => {
     const userId = req.decoded.userId;
     const applicationId = req.params.applicationId;
     const commentText = req.body.comment;
-   
-    console.log(userId,applicationId,typeof(commentText))
+
     if (!applicationId) {
       return res.status(400).json({ status: false, data: "applicationId required" });
     }
@@ -29,24 +28,18 @@ const createComment = async (req, res) => {
     }
 
     // Check if the application is saved
-  
+    const isApplicationSaved = user.saved.some(app => app.obj_id.toString() === applicationId);
+
+    if (isApplicationSaved) {
+      return res.status(400).json({ status: false, data: "Application is already saved." });
+    }
 
     // Check if the application is already followed
-   // Check if the application is saved
-const isApplicationSaved = user.saved.some(app => {
-  // Check if app.obj_id exists and is not undefined
-  if (app.obj_id && typeof app.obj_id === 'object' && app.obj_id.hasOwnProperty('toString')) {
-    return app.obj_id.toString() === applicationId;
-  }
-  return false; // Return false if app.obj_id is undefined or doesn't have a 'toString' method
-});
+    const isApplicationFollowed = user.following_app.some(app => app.obj_id.toString() === applicationId);
 
-if (isApplicationSaved) {
-  return res.status(400).json({ status: false, data: "Application is already saved." });
-} else {
-  // Handle the case when the application is not saved
-}
-
+    if (isApplicationFollowed) {
+      return res.status(400).json({ status: false, data: "Application is already followed." });
+    }
 
     // Construct the comment data
     const commentData = {
