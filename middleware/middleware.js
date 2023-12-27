@@ -7,7 +7,7 @@ const authentication = async (req, res, next) => {
     try {
         console.log("done")
         const authHeader = req.headers.authorization;
-
+        console.log(authHeader)
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
             return res.status(401).json({ status: false, data: "Token must be provided" });
         }
@@ -16,6 +16,7 @@ const authentication = async (req, res, next) => {
 
         jwt.verify(token, "osnilWebSolution", (err, decoded) => {
             if (err) {
+                console.log(err)
                 return res.status(401).json({ status: false, message: "JWT verification failed", error: err.message });
             }
 
