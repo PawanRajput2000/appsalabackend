@@ -11,7 +11,8 @@ const createComment = async (req, res) => {
     const userId = req.decoded.userId;
     const applicationId = req.params.applicationId;
     const commentText = req.body.comment;
-
+   
+    console.log(userId,applicationId,typeof(commentText))
     if (!applicationId) {
       return res.status(400).json({ status: false, data: "applicationId required" });
     }
@@ -28,18 +29,24 @@ const createComment = async (req, res) => {
     }
 
     // Check if the application is saved
-    const isApplicationSaved = user.saved.some(app => app.obj_id.toString() === applicationId);
-
-    if (isApplicationSaved) {
-      return res.status(400).json({ status: false, data: "Application is already saved." });
-    }
+  
 
     // Check if the application is already followed
-    const isApplicationFollowed = user.following_app.some(app => app.obj_id.toString() === applicationId);
+   // Check if the application is saved
+const isApplicationSaved = user.saved.some(app => {
+  // Check if app.obj_id exists and is not undefined
+  if (app.obj_id && typeof app.obj_id === 'object' && app.obj_id.hasOwnProperty('toString')) {
+    return app.obj_id.toString() === applicationId;
+  }
+  return false; // Return false if app.obj_id is undefined or doesn't have a 'toString' method
+});
 
-    if (isApplicationFollowed) {
-      return res.status(400).json({ status: false, data: "Application is already followed." });
-    }
+if (isApplicationSaved) {
+  return res.status(400).json({ status: false, data: "Application is already saved." });
+} else {
+  // Handle the case when the application is not saved
+}
+
 
     // Construct the comment data
     const commentData = {
@@ -55,6 +62,7 @@ const createComment = async (req, res) => {
     let followingApp = user.following_app.find(
       (app) => app.obj_id.toString() === applicationId
     );
+    
 
     // If the user is not already following the application, follow it
     if (!followingApp) {
@@ -88,7 +96,7 @@ const createComment = async (req, res) => {
 
     // Save the user with updated following_app arrays, but do not add to "saved"
     await user.save();
-
+    
     // Send the comment to the frontend because it will reflect in the latest comment lists
     res.json({ status: true, message: "Comment added successfully.", comment: commentText });
   } catch (error) {
