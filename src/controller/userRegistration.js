@@ -180,6 +180,7 @@ const updateUser = async (req, res) => {
 const updateApplicationStatus = async (req, res) => {
   try {
     // Find the user by their ID
+   // console.log("checking1")
     const userId = req.decoded.userId;
     const applicationId = req.params.applicationId;
     const newStatus = req.body.status;
@@ -189,23 +190,28 @@ const updateApplicationStatus = async (req, res) => {
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
-
+    console.log(typeof(applicationId))
+// console.log("checking1")
+// console.log(user)
     // Find the application within the "following_app" array by its ID
-    let application;
-    if (user.following_app) {
-      application = user.following_app.find((app) =>
-        app.obj_id.equals(applicationId)
-      );
-    }
+  // Find the application within the "following_app" array by its ID
+let application;
+if (user.following_app) {
+  application = user.following_app.find((app) =>
+    app.obj_id && app.obj_id.equals(applicationId)
+  );
+}
 
+//console.log("APPLIATIOON" ,application)
+    
     // Find the application within the "saved" array by its ID
     let savedApplication;
     if (user.saved) {
       savedApplication = user.saved.find((app) =>
-        app.obj_id.equals(applicationId)
+      app.obj_id && app.obj_id.equals(applicationId)
       );
     }
-
+    console.log("checking2")
     if (!application && !savedApplication) {
       // Create a new rating object with default values
       const newRating = new Rating({
