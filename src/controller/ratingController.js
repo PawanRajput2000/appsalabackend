@@ -34,8 +34,25 @@ const createRating = async (req, res) => {
       (app) => app.obj_id.toString() === applicationId
     );
 
-    // If following the app, update it
+    // If following the app, update its subscription with the rating
     if (followingApp) {
+      // Ensure necessary structures are initialized
+      if (!followingApp.subscription) {
+        followingApp.subscription = {
+          date: Date.now(),
+          amount: 0,
+          duration: "unknown",
+          package: "trying",
+          comment: [],
+          user_ratings: []
+        };
+      }
+
+      if (!followingApp.subscription.user_ratings) {
+        followingApp.subscription.user_ratings = [];
+      }
+
+      // Add the rating to the subscription array
       followingApp.subscription.user_ratings.push(existingRating._id);
     } else {
       // If not in following_app, create a new following_app entry
@@ -63,6 +80,7 @@ const createRating = async (req, res) => {
     res.status(500).send({ status: false, data: err.message });
   }
 };
+
 
 module.exports = { createRating };
 
