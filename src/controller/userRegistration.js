@@ -14,8 +14,8 @@ const signup = async (req, res) => {
     if (!email) {
       return res.status(400).send({ status: false, data: "Email is require" })
     }
-    let checkUnique = await userModel.findOne({email: email})
-    if(checkUnique){
+    let checkUnique = await userModel.findOne({ email: email })
+    if (checkUnique) {
       return res.status(400).send({ status: false, data: "email should be unique" })
     }
     if (!password) {
@@ -179,8 +179,6 @@ const updateUser = async (req, res) => {
 
 const updateApplicationStatus = async (req, res) => {
   try {
-    // Find the user by their ID
-   // console.log("checking1")
     const userId = req.decoded.userId;
     const applicationId = req.params.applicationId;
     const newStatus = req.body.status;
@@ -190,28 +188,24 @@ const updateApplicationStatus = async (req, res) => {
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
-    console.log(typeof(applicationId))
-// console.log("checking1")
-// console.log(user)
-    // Find the application within the "following_app" array by its ID
-  // Find the application within the "following_app" array by its ID
-let application;
-if (user.following_app) {
-  application = user.following_app.find((app) =>
-    app.obj_id && app.obj_id.equals(applicationId)
-  );
-}
 
-//console.log("APPLIATIOON" ,application)
-    
-    // Find the application within the "saved" array by its ID
+    let application;
     let savedApplication;
-    if (user.saved) {
-      savedApplication = user.saved.find((app) =>
-      app.obj_id && app.obj_id.equals(applicationId)
+
+    // Find the application within the "following_app" array by its ID
+    if (user.following_app) {
+      application = user.following_app.find((app) =>
+        app.obj_id && app.obj_id.equals(applicationId)
       );
     }
-    console.log("checking2")
+
+    // Find the application within the "saved" array by its ID
+    if (user.saved) {
+      savedApplication = user.saved.find((app) =>
+        app.obj_id && app.obj_id.equals(applicationId)
+      );
+    }
+
     if (!application && !savedApplication) {
       // Create a new rating object with default values
       const newRating = new Rating({
@@ -262,9 +256,15 @@ if (user.following_app) {
         application.status = newStatus;
       }
 
-      // If the application is found in "saved," update its status
+      // If the application is found in "saved," update its status and remove it from "following_app" if present
       if (savedApplication) {
         savedApplication.status = newStatus;
+        if (application) {
+          const index = user.following_app.findIndex((app) => app.obj_id.equals(applicationId));
+          if (index !== -1) {
+            user.following_app.splice(index, 1); // Remove from following_app
+          }
+        }
       }
     }
 
@@ -279,6 +279,7 @@ if (user.following_app) {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
 
 
 
