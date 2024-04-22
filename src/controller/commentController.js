@@ -11,7 +11,7 @@ const createComment = async (req, res) => {
     const userId = req.decoded.userId;
     const applicationId = req.params.applicationId;
     const commentText = req.body.comment;
-
+   
     if (!applicationId) {
       return res.status(400).json({ status: false, data: "applicationId required" });
     }
@@ -27,12 +27,24 @@ const createComment = async (req, res) => {
       return res.status(404).json({ status: false, data: "User not found" });
     }
 
+   
+
     // Check if the application is saved
-    const isApplicationSaved = user.saved.some(app => app.obj_id.toString() === applicationId);
-
+    const isApplicationSaved = user.saved.some(app => {
+      if (app && app.obj_id) {
+        return app.obj_id.toString() === applicationId;
+      }
+      return false; // Return false if app or app.obj_id is undefined
+    });
+       
     // Check if the application is already followed
-    const isApplicationFollowed = user.following_app.some(app => app.obj_id.toString() === applicationId);
-
+    const isApplicationFollowed = user.following_app.some(app => {
+      if (app && app.obj_id) {
+        return app.obj_id.toString() === applicationId;
+      }
+      return false; // Return false if app or app.obj_id is undefined
+    });
+            
     // Construct the comment data
     const commentData = {
       userId: userId,
@@ -45,13 +57,19 @@ const createComment = async (req, res) => {
 
     if (isApplicationSaved) {
       // Find the saved application
-      const savedApplication = user.saved.find(app => app.obj_id.toString() === applicationId);
-
+     
+      const savedApplication = user.saved.find(app => {
+        if (app && app.obj_id) {
+          return app.obj_id.toString() === applicationId;
+        }
+        return false; // Return false if app or app.obj_id is undefined
+      });
+          
       // Ensure necessary structures are initialized
       if (!savedApplication.subscription) {
         savedApplication.subscription = {};
       }
-
+      
       if (!savedApplication.subscription.comment) {
         savedApplication.subscription.comment = [];
       }
@@ -85,6 +103,7 @@ const createComment = async (req, res) => {
         followingApp.subscription = {};
       }
 
+     
       if (!followingApp.subscription.comment) {
         followingApp.subscription.comment = [];
       }
@@ -95,7 +114,7 @@ const createComment = async (req, res) => {
 
     // Save the user with updated arrays
     await user.save();
-
+    
     // Send the comment to the frontend because it will reflect in the latest comment lists
     res.json({ status: true, message: "Comment added successfully.", comment: commentText });
   } catch (error) {
