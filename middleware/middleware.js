@@ -5,15 +5,22 @@ const ObjectId = mongoose.Types.ObjectId;
 
 const authentication = async (req, res, next) => {
     try {
-        console.log(req.body)
-        console.log("done")
+        
         const authHeader = req.headers.authorization;
-        console.log(authHeader)
+        
+       // console.log(typeof(authHeader))
+        
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
             return res.status(401).json({ status: false, data: "Token must be provided" });
         }
 
         const token = authHeader.split(" ")[1];
+        console.log(typeof(token)  )
+        if( token === "null"){
+            return res.status(401).json({ status: false, data: "Token must be provided" });
+   
+        }
+        
         console.log("token :", token)
 
         jwt.verify(token, "osnilWebSolution", (err, decoded) => {
