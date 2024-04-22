@@ -191,14 +191,20 @@ const updateApplicationStatus = async (req, res) => {
     }
 
     // Find the application within the "following_app" array by its ID
-    let application = user.following_app.find((app) =>
-      app.obj_id.equals(applicationId)
-    );
+    let application;
+    if (user.following_app) {
+      application = user.following_app.find((app) =>
+        app.obj_id.equals(applicationId)
+      );
+    }
 
     // Find the application within the "saved" array by its ID
-    let savedApplication = user.saved.find((app) =>
-      app.obj_id.equals(applicationId)
-    );
+    let savedApplication;
+    if (user.saved) {
+      savedApplication = user.saved.find((app) =>
+        app.obj_id.equals(applicationId)
+      );
+    }
 
     if (!application && !savedApplication) {
       // Create a new rating object with default values
