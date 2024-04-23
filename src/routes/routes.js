@@ -29,7 +29,7 @@ router.get("/category", fetchCategory)
 
 router.post("/create_products", createProduct)
 router.get("/products", getProduct)
-router.post("/saved_product/:applicationId",savedProduct)//authentication
+router.post("/saved_product/:applicationId",authentication,savedProduct)//authentication
 router.post("/deleteFromSaved",authentication,deleteFromSaved)
 router.get("/pricinginfo/:applicationId",productpricing)
 
