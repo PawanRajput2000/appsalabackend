@@ -54,32 +54,17 @@ const createRating = async (req, res) => {
 
       // Add the rating to the subscription array
       followingApp.subscription.user_ratings.push(existingRating._id);
-    } else {
-      // If not in following_app, create a new following_app entry
-      followingApp = {
-        obj_id: app._id,
-        status: "Maybe 🤔",
-        subscription: {
-          date: Date.now(),
-          amount: 0,
-          duration: "unknown",
-          package: "trying",
-          comment: [],
-          user_ratings: [existingRating._id]
-        }
-      };
-      user.following_app.push(followingApp);
-    }
 
-    // Save the user with the updated "following_app" array
-    await user.save();
-
+      // Save the user with the updated "following_app" array
+      await user.save();
+    } 
     res.status(200).send({ status: true, data: "Rating added/updated successfully." });
   } catch (err) {
     console.error(err.message);
     res.status(500).send({ status: false, data: err.message });
   }
 };
+
 
 
 module.exports = { createRating };

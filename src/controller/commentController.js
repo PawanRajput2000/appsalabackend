@@ -11,7 +11,7 @@ const createComment = async (req, res) => {
     const userId = req.decoded.userId;
     const applicationId = req.params.applicationId;
     const commentText = req.body.comment;
-   
+
     if (!applicationId) {
       return res.status(400).json({ status: false, data: "applicationId required" });
     }
@@ -27,24 +27,12 @@ const createComment = async (req, res) => {
       return res.status(404).json({ status: false, data: "User not found" });
     }
 
-   
-
     // Check if the application is saved
-    const isApplicationSaved = user.saved.some(app => {
-      if (app && app.obj_id) {
-        return app.obj_id.toString() === applicationId;
-      }
-      return false; // Return false if app or app.obj_id is undefined
-    });
-       
+    const isApplicationSaved = user.saved.some(app => app && app.obj_id && app.obj_id.toString() === applicationId);
+
     // Check if the application is already followed
-    const isApplicationFollowed = user.following_app.some(app => {
-      if (app && app.obj_id) {
-        return app.obj_id.toString() === applicationId;
-      }
-      return false; // Return false if app or app.obj_id is undefined
-    });
-            
+    const isApplicationFollowed = user.following_app.some(app => app && app.obj_id && app.obj_id.toString() === applicationId);
+
     // Construct the comment data
     const commentData = {
       userId: userId,
@@ -57,71 +45,50 @@ const createComment = async (req, res) => {
 
     if (isApplicationSaved) {
       // Find the saved application
-     
-      const savedApplication = user.saved.find(app => {
-        if (app && app.obj_id) {
-          return app.obj_id.toString() === applicationId;
-        }
-        return false; // Return false if app or app.obj_id is undefined
-      });
-          
+      const savedApplication = user.saved.find(app => app && app.obj_id && app.obj_id.toString() === applicationId);
+
       // Ensure necessary structures are initialized
       if (!savedApplication.subscription) {
         savedApplication.subscription = {};
       }
-      
+
       if (!savedApplication.subscription.comment) {
         savedApplication.subscription.comment = [];
       }
 
       // Add the comment to the subscription array
       savedApplication.subscription.comment.push(savedComment._id);
-    } else if (!isApplicationFollowed) {
-      // If the application is not saved or followed, follow it
-      const followingApp = {
-        obj_id: applicationId,
-        status: "Maybe 🤔",
-        subscription: {
-          comment: [savedComment._id],
-        },
-      };
-
-      // Check if duration is not provided, and if so, set it to "0"
-      if (!followingApp.subscription.duration) {
-        followingApp.subscription.duration = "0";
-      }
-
-      user.following_app.push(followingApp);
-    } else {
+    } else if (isApplicationFollowed) {
       // Find the specific application within the user's following_app array
-      let followingApp = user.following_app.find(
-        (app) => app.obj_id.toString() === applicationId
-      );
+      let followingApp = user.following_app.find(app => app.obj_id.toString() === applicationId);
 
       // Ensure necessary structures are initialized
       if (!followingApp.subscription) {
         followingApp.subscription = {};
       }
 
-     
       if (!followingApp.subscription.comment) {
         followingApp.subscription.comment = [];
       }
 
       // Add the comment to the subscription array
       followingApp.subscription.comment.push(savedComment._id);
+
+      // Save the user with updated arrays
+      await user.save();
+    } else {
+      // If the application is not saved or followed, do nothing
+      // This means the comment will not be added to any subscription
     }
 
-    // Save the user with updated arrays
-    await user.save();
-    
     // Send the comment to the frontend because it will reflect in the latest comment lists
     res.json({ status: true, message: "Comment added successfully.", comment: commentText });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ status: false, data: error.message ,msg:"error"});
+    console.error(error.message);
+    res.status(500).json({ status: false, data: error.message, msg: "error" });
   }
 };
+
 
 
 
