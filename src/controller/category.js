@@ -1,6 +1,5 @@
 const CategorySchema = require("../models/category")
 
-
 const savecategory = async (req, res) => {
     try {
         const body = req.body
@@ -16,58 +15,45 @@ const savecategory = async (req, res) => {
 
 const fetchSubcategory = async (req, res) => {
     try {
-        let data = await CategorySchema.find();
+        // Fetch all categories from the CategorySchema
+        let categories = await CategorySchema.find();
 
-        // Fetch all category data
-        data = data.map((item) => ({
-            ...item.toObject(),
-            _id: item._id.toString(), // Convert ObjectId to string for better representation
-        }));
+        // Fetch all unique categories from the App schema
+        const uniqueCategories = await App.distinct("Category");
 
-        // Function to filter categories with non-empty subCategory_ids
-        const filterNonEmptySubcategories = (category) => {
-            return category.subCategory_ids && category.subCategory_ids.length == 0;
-        };
+        // Filter categories to include only those that have a corresponding category in the App schema
+        const filteredCategories = categories.filter(category => {
+            return uniqueCategories.includes(category.name);
+        });
 
-        // Filter categories with non-empty subCategory_ids
-        const categoriesData = data.filter(filterNonEmptySubcategories);
-
-        // Respond with the filtered data
-        return res.json({ status: true, data: categoriesData });
+        // Respond with the filtered categories
+        return res.json({ status: true, data: filteredCategories });
     } catch (err) {
         console.log(err.message);
         return res.status(500).json({ status: false, message: "Internal Server Error" });
     }
 };
+
 
 
 
 const fetchCategory = async (req, res) => {
     try {
-        let data = await CategorySchema.find().populate("subCategory_ids");
-
-        // Fetch all category data
-        data = data.map((item) => ({
-            ...item.toObject(),
-            _id: item._id.toString(), // Convert ObjectId to string for better representation
-        }));                
-
-        // Function to filter categories with non-empty subCategory_ids
-        const filterNonEmptySubcategories = (category) => {
-            return category.subCategory_ids && category.subCategory_ids.length > 0;
-        };
+        // Fetch all categories from the CategorySchema
+        let categories = await CategorySchema.find().populate("subCategory_ids");
 
         // Filter categories with non-empty subCategory_ids
-        const finalData = data.filter(filterNonEmptySubcategories);
+        const filteredCategories = categories.filter(category => {
+            return category.subCategory_ids && category.subCategory_ids.length > 0;
+        });
 
-
-        // Respond with the filtered data
-        return res.json({ status: true, data: finalData });
+        return res.json({ status: true, data: filteredCategories });
     } catch (err) {
         console.log(err.message);
         return res.status(500).json({ status: false, message: "Internal Server Error" });
     }
 };
+
 
 
 module.exports = { savecategory, fetchSubcategory, fetchCategory }

@@ -24,7 +24,7 @@ router.post("/review", review)
 
 router.post("/category", savecategory)
 router.get("/category", fetchCategory)
-router.get("/subcategory", fetchSubcategory)
+//router.get("/subcategory", fetchSubcategory)
 
 
 router.post("/create_products", createProduct)
