@@ -39,7 +39,7 @@ router.get("/category/:categoryname", productListByCategory)
 
 router.get("/product-list/:slug", productDetails)
 
-router.post("/comment/:applicationId",createComment)//authentication
+router.post("/comment/:applicationId",authentication,createComment)//
 
 
 // Rating     

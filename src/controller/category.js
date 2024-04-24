@@ -79,6 +79,12 @@ const fetchCategory = async (req, res) => {
         });
 
         const finalFiltered = filteredCategories.filter(category => category.subCategory_ids.length > 0);
+        finalFiltered.forEach(category => {
+            // Filter subcategories based on existing category slugs
+            category.subCategory_ids = category.subCategory_ids.filter(subCategory => {
+                return existCategorySlugs.includes(subCategory.slug);
+            });
+        });
 
         return res.json({ status: true, data: finalFiltered });
     } catch (err) {
