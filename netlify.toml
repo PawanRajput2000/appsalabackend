@@ -1,0 +1,12 @@
+[build]
+  command = "npm run build"
+  publish = "dist"  # Change this to the directory where your build artifacts are stored
+
+[dev]
+  command = "npm run dev"
+  port = 3000  # Change this to the port your development server runs on
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
